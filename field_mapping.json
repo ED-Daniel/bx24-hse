@@ -1,0 +1,596 @@
+{
+  "metadata": {
+    "description": "Маппинг полей между формами опросов и Bitrix24 CRM",
+    "version": "1.0.0",
+    "created_at": "2025-10-22",
+    "bitrix24_webhook_url": "https://crmhse.ru/rest/169/3w9qyda4ckgm94zi/"
+  },
+  "bitrix24_entities": {
+    "contacts": {
+      "entity_type": "crm.contact",
+      "api_method_prefix": "crm.contact",
+      "description": "Контакты в Bitrix24",
+      "standard_fields": {
+        "ID": {
+          "type": "integer",
+          "isRequired": false,
+          "isReadOnly": true,
+          "title": "ID"
+        },
+        "NAME": {
+          "type": "string",
+          "isRequired": true,
+          "isReadOnly": false,
+          "title": "Имя"
+        },
+        "SECOND_NAME": {
+          "type": "string",
+          "isRequired": true,
+          "isReadOnly": false,
+          "title": "Отчество"
+        },
+        "LAST_NAME": {
+          "type": "string",
+          "isRequired": true,
+          "isReadOnly": false,
+          "title": "Фамилия"
+        },
+        "EMAIL": {
+          "type": "crm_multifield",
+          "isRequired": false,
+          "isReadOnly": false,
+          "isMultiple": true,
+          "title": "E-mail",
+          "format": [
+            {
+              "VALUE": "email@example.com",
+              "VALUE_TYPE": "WORK"
+            }
+          ]
+        },
+        "PHONE": {
+          "type": "crm_multifield",
+          "isRequired": false,
+          "isReadOnly": false,
+          "isMultiple": true,
+          "title": "Телефон",
+          "format": [
+            {
+              "VALUE": "+79991234567",
+              "VALUE_TYPE": "WORK"
+            }
+          ]
+        },
+        "BIRTHDATE": {
+          "type": "date",
+          "isRequired": false,
+          "isReadOnly": false,
+          "title": "Дата рождения"
+        },
+        "TYPE_ID": {
+          "type": "crm_status",
+          "isRequired": false,
+          "isReadOnly": false,
+          "statusType": "CONTACT_TYPE",
+          "title": "Тип контакта"
+        },
+        "SOURCE_ID": {
+          "type": "crm_status",
+          "isRequired": false,
+          "isReadOnly": false,
+          "statusType": "SOURCE",
+          "title": "Источник"
+        },
+        "COMMENTS": {
+          "type": "string",
+          "isRequired": false,
+          "isReadOnly": false,
+          "title": "Комментарий"
+        },
+        "UTM_SOURCE": {
+          "type": "string",
+          "isRequired": false,
+          "isReadOnly": false,
+          "title": "Рекламная система"
+        },
+        "UTM_MEDIUM": {
+          "type": "string",
+          "isRequired": false,
+          "isReadOnly": false,
+          "title": "Тип трафика"
+        },
+        "UTM_CAMPAIGN": {
+          "type": "string",
+          "isRequired": false,
+          "isReadOnly": false,
+          "title": "Обозначение рекламной кампании"
+        },
+        "UTM_CONTENT": {
+          "type": "string",
+          "isRequired": false,
+          "isReadOnly": false,
+          "title": "Содержание кампании"
+        },
+        "UTM_TERM": {
+          "type": "string",
+          "isRequired": false,
+          "isReadOnly": false,
+          "title": "Условие поиска кампании"
+        }
+      }
+    },
+    "deals": {
+      "entity_type": "crm.deal",
+      "api_method_prefix": "crm.deal",
+      "description": "Сделки в Bitrix24",
+      "standard_fields": {
+        "ID": {
+          "type": "integer",
+          "isRequired": false,
+          "isReadOnly": true,
+          "title": "ID"
+        },
+        "TITLE": {
+          "type": "string",
+          "isRequired": false,
+          "isReadOnly": false,
+          "title": "Название"
+        },
+        "STAGE_ID": {
+          "type": "crm_status",
+          "isRequired": false,
+          "isReadOnly": false,
+          "statusType": "DEAL_STAGE",
+          "title": "Стадия сделки"
+        },
+        "CONTACT_IDS": {
+          "type": "crm_contact",
+          "isRequired": false,
+          "isReadOnly": false,
+          "isMultiple": true,
+          "title": "Контакты"
+        },
+        "SOURCE_ID": {
+          "type": "crm_status",
+          "isRequired": false,
+          "isReadOnly": false,
+          "statusType": "SOURCE",
+          "title": "Источник"
+        },
+        "COMMENTS": {
+          "type": "string",
+          "isRequired": false,
+          "isReadOnly": false,
+          "title": "Комментарий"
+        },
+        "UTM_SOURCE": {
+          "type": "string",
+          "isRequired": false,
+          "isReadOnly": false,
+          "title": "Рекламная система"
+        },
+        "UTM_MEDIUM": {
+          "type": "string",
+          "isRequired": false,
+          "isReadOnly": false,
+          "title": "Тип трафика"
+        },
+        "UTM_CAMPAIGN": {
+          "type": "string",
+          "isRequired": false,
+          "isReadOnly": false,
+          "title": "Обозначение рекламной кампании"
+        },
+        "UTM_CONTENT": {
+          "type": "string",
+          "isRequired": false,
+          "isReadOnly": false,
+          "title": "Содержание кампании"
+        },
+        "UTM_TERM": {
+          "type": "string",
+          "isRequired": false,
+          "isReadOnly": false,
+          "title": "Условие поиска кампании"
+        }
+      },
+      "custom_fields": {
+        "UF_CRM_1755626160": {
+          "type": "iblock_element",
+          "isRequired": false,
+          "isReadOnly": false,
+          "isMultiple": false,
+          "isDynamic": true,
+          "title": "Образовательная программа",
+          "description": "Привязка к списку 'Образовательные программы' (IBLOCK_ID=18)",
+          "settings": {
+            "IBLOCK_ID": 18
+          }
+        },
+        "UF_CRM_1755626174": {
+          "type": "string",
+          "isRequired": false,
+          "isReadOnly": false,
+          "isDynamic": true,
+          "title": "ID Roistat"
+        }
+      }
+    }
+  },
+  "universal_lists": {
+    "polls": {
+      "iblock_id": 17,
+      "iblock_code": "POLLS",
+      "iblock_type_id": "lists",
+      "description": "Опросные формы",
+      "fields": {
+        "NAME": {
+          "field_id": "NAME",
+          "sort": 10,
+          "name": "Название",
+          "is_required": true,
+          "type": "NAME",
+          "description": "Название опросной формы"
+        },
+        "PROPERTY_64": {
+          "field_id": "PROPERTY_64",
+          "property_id": "64",
+          "code": "POLL_ID",
+          "sort": 20,
+          "name": "ID Опросной формы",
+          "is_required": true,
+          "type": "S",
+          "description": "Уникальный идентификатор опросной формы из внешней системы"
+        },
+        "PROPERTY_66": {
+          "field_id": "PROPERTY_66",
+          "property_id": "66",
+          "code": "REPONSIBLE_EMPLOYEE_ID",
+          "sort": 30,
+          "name": "Ответсвтственный за опросную форму",
+          "is_required": true,
+          "type": "S:employee",
+          "description": "Сотрудник, ответственный за опросную форму"
+        },
+        "PROPERTY_65": {
+          "field_id": "PROPERTY_65",
+          "property_id": "65",
+          "code": "POLL_URL",
+          "sort": 40,
+          "name": "URL Опросной формы",
+          "is_required": true,
+          "type": "S",
+          "description": "Ссылка на опросную форму"
+        },
+        "PROPERTY_74": {
+          "field_id": "PROPERTY_74",
+          "property_id": "74",
+          "code": "EDUCATIONAL_PROGRAM_ID",
+          "sort": 50,
+          "name": "Образовательная программа",
+          "is_required": false,
+          "type": "E:EList",
+          "link_iblock_id": "18",
+          "description": "Привязка к образовательной программе"
+        }
+      }
+    },
+    "educational_programs": {
+      "iblock_id": 18,
+      "iblock_code": "EDUCATIONALPROGRAMS",
+      "iblock_type_id": "lists",
+      "description": "Образовательные программы",
+      "fields": {
+        "NAME": {
+          "field_id": "NAME",
+          "sort": 10,
+          "name": "Название",
+          "is_required": true,
+          "type": "NAME",
+          "description": "Название образовательной программы"
+        },
+        "PROPERTY_73": {
+          "field_id": "PROPERTY_73",
+          "property_id": "73",
+          "code": "EDUCATIONAL_PROGRAM_ID",
+          "sort": 20,
+          "name": "ID Образовательной программы (внешний)",
+          "is_required": true,
+          "type": "S",
+          "description": "Внешний идентификатор образовательной программы"
+        },
+        "PROPERTY_67": {
+          "field_id": "PROPERTY_67",
+          "property_id": "67",
+          "code": "PROGRAM_URL",
+          "sort": 30,
+          "name": "Ссылка на образовательную программу",
+          "is_required": false,
+          "type": "S",
+          "description": "URL образовательной программы"
+        },
+        "PROPERTY_68": {
+          "field_id": "PROPERTY_68",
+          "property_id": "68",
+          "code": "LANGUAGE_ID",
+          "sort": 40,
+          "name": "Язык",
+          "is_required": false,
+          "type": "E:EList",
+          "link_iblock_id": "19",
+          "description": "Язык программы"
+        },
+        "PROPERTY_69": {
+          "field_id": "PROPERTY_69",
+          "property_id": "69",
+          "code": "CAMPUS_ID",
+          "sort": 50,
+          "name": "Кампус",
+          "is_required": false,
+          "type": "E:EList",
+          "link_iblock_id": "20",
+          "description": "Кампус программы"
+        },
+        "PROPERTY_70": {
+          "field_id": "PROPERTY_70",
+          "property_id": "70",
+          "code": "OWNER_ID",
+          "sort": 60,
+          "name": "Ответственный за образовательную программу",
+          "is_required": false,
+          "type": "S:employee",
+          "description": "Сотрудник, ответственный за программу"
+        },
+        "PROPERTY_71": {
+          "field_id": "PROPERTY_71",
+          "property_id": "71",
+          "code": "EDUCATION_FORM_ID",
+          "sort": 70,
+          "name": "Формат обучения",
+          "is_required": false,
+          "type": "E:EList",
+          "link_iblock_id": "21",
+          "description": "Формат обучения программы"
+        },
+        "PROPERTY_72": {
+          "field_id": "PROPERTY_72",
+          "property_id": "72",
+          "code": "STATUS",
+          "sort": 80,
+          "name": "Статус",
+          "is_required": false,
+          "type": "L",
+          "default_value": "57",
+          "values": {
+            "56": "Активная",
+            "57": "Неактивная"
+          },
+          "description": "Статус программы"
+        }
+      }
+    }
+  },
+  "poll_form_to_bitrix_mapping": {
+    "description": "Маппинг полей из форм опросов в Bitrix24",
+    "contact_mapping": {
+      "firstname": {
+        "bitrix_field": "NAME",
+        "entity": "contact",
+        "required": true,
+        "description": "Имя контакта"
+      },
+      "lastname": {
+        "bitrix_field": "LAST_NAME",
+        "entity": "contact",
+        "required": true,
+        "description": "Фамилия контакта"
+      },
+      "middlename": {
+        "bitrix_field": "SECOND_NAME",
+        "entity": "contact",
+        "required": false,
+        "description": "Отчество контакта"
+      },
+      "email": {
+        "bitrix_field": "EMAIL",
+        "entity": "contact",
+        "required": true,
+        "is_multifield": true,
+        "format": {
+          "VALUE": "{value}",
+          "VALUE_TYPE": "WORK"
+        },
+        "description": "Email контакта (используется для поиска существующего контакта)"
+      },
+      "telephone": {
+        "bitrix_field": "PHONE",
+        "entity": "contact",
+        "required": false,
+        "is_multifield": true,
+        "format": {
+          "VALUE": "{value}",
+          "VALUE_TYPE": "WORK"
+        },
+        "description": "Телефон контакта"
+      }
+    },
+    "deal_mapping": {
+      "educational_program_1": {
+        "bitrix_field": "UF_CRM_1755626160",
+        "entity": "deal",
+        "required": false,
+        "is_array": true,
+        "description": "Образовательная программа (массив программ)",
+        "lookup_in_list": "educational_programs",
+        "lookup_by_field": "NAME"
+      }
+    },
+    "analytics_mapping": {
+      "utm_source": {
+        "bitrix_field": "UTM_SOURCE",
+        "entity": "contact",
+        "source_path": "header_data.analytics.params.utm_source",
+        "description": "Рекламная система"
+      },
+      "utm_medium": {
+        "bitrix_field": "UTM_MEDIUM",
+        "entity": "contact",
+        "source_path": "header_data.analytics.params.utm_medium",
+        "description": "Тип трафика"
+      },
+      "utm_campaign": {
+        "bitrix_field": "UTM_CAMPAIGN",
+        "entity": "contact",
+        "source_path": "header_data.analytics.params.utm_campaign",
+        "description": "Обозначение рекламной кампании"
+      },
+      "utm_content": {
+        "bitrix_field": "UTM_CONTENT",
+        "entity": "contact",
+        "source_path": "header_data.analytics.params.utm_content",
+        "description": "Содержание кампании"
+      },
+      "utm_term": {
+        "bitrix_field": "UTM_TERM",
+        "entity": "contact",
+        "source_path": "header_data.analytics.params.utm_term",
+        "description": "Условие поиска кампании"
+      },
+      "roistat_visit": {
+        "bitrix_field": "UF_CRM_1755626174",
+        "entity": "deal",
+        "source_path": "header_data.analytics.cookies.roistat_visit",
+        "description": "ID Roistat"
+      }
+    },
+    "cookies_storage": {
+      "description": "Cookies сохраняются в комментариях сделки в JSON формате",
+      "bitrix_field": "COMMENTS",
+      "entity": "deal",
+      "source_path": "header_data.analytics.cookies",
+      "format": "json"
+    }
+  },
+  "integration_workflow": {
+    "description": "Бизнес-логика обработки ответов согласно INTEGRATION.md",
+    "steps": [
+      {
+        "step": 1,
+        "action": "find_poll_form",
+        "description": "Поиск опросной формы по poll_id в списке 'Опросные Формы' (IBLOCK_ID=17)",
+        "api_method": "lists.element.get",
+        "filter_by": "PROPERTY_64 (POLL_ID)",
+        "on_not_found": "return HTTP 404"
+      },
+      {
+        "step": 2,
+        "action": "find_or_create_contact",
+        "description": "Поиск контакта по email, если не найден - создать новый",
+        "api_method_search": "crm.contact.list",
+        "filter_by": "EMAIL",
+        "api_method_create": "crm.contact.add",
+        "fields_to_save": [
+          "NAME",
+          "LAST_NAME",
+          "SECOND_NAME",
+          "EMAIL",
+          "PHONE",
+          "UTM_SOURCE",
+          "UTM_MEDIUM",
+          "UTM_CAMPAIGN",
+          "UTM_CONTENT",
+          "UTM_TERM"
+        ]
+      },
+      {
+        "step": 3,
+        "action": "find_educational_program",
+        "description": "Поиск образовательной программы в списке (IBLOCK_ID=18)",
+        "api_method": "lists.element.get",
+        "filter_by": "NAME",
+        "on_not_found": "return HTTP 404"
+      },
+      {
+        "step": 4,
+        "action": "find_or_create_deal",
+        "description": "Поиск сделки по CONTACT_ID и UF_CRM_1755626160 (образовательная программа)",
+        "api_method_search": "crm.deal.list",
+        "filter_by": [
+          "CONTACT_IDS",
+          "UF_CRM_1755626160"
+        ],
+        "api_method_create": "crm.deal.add",
+        "api_method_update": "crm.deal.update",
+        "fields_to_save": [
+          "CONTACT_IDS",
+          "UF_CRM_1755626160",
+          "UF_CRM_1755626174",
+          "UTM_SOURCE",
+          "UTM_MEDIUM",
+          "UTM_CAMPAIGN",
+          "UTM_CONTENT",
+          "UTM_TERM",
+          "COMMENTS"
+        ]
+      }
+    ]
+  },
+  "api_endpoints": {
+    "postPoll": {
+      "path": "/postPoll",
+      "method": "POST",
+      "description": "Регистрация/реактивация опроса",
+      "request_schema": {
+        "poll_id": "integer",
+        "poll_name": "string",
+        "poll_language": "string",
+        "employee_email": "string"
+      },
+      "response_success": {
+        "status": "success",
+        "message": "string",
+        "description": "string",
+        "poll_id": "integer",
+        "is_successful": true
+      },
+      "response_error": {
+        "status": "error",
+        "message": "string",
+        "description": "string",
+        "poll_id": "integer",
+        "is_successful": false
+      }
+    },
+    "postAnswer": {
+      "path": "/postAnswer",
+      "method": "POST",
+      "description": "Прием ответа из опросной формы",
+      "request_schema": {
+        "header_data": {
+          "poll_id": "integer",
+          "answer_id": "integer",
+          "create_time": "datetime",
+          "form_kind": "integer",
+          "analytics": "object"
+        },
+        "data": "object"
+      },
+      "response_success": {
+        "status": "success",
+        "message": "string",
+        "description": "string",
+        "poll_id": "integer",
+        "answer_id": "integer",
+        "is_successful": true
+      },
+      "response_error": {
+        "status": "error",
+        "message": "string",
+        "description": "string",
+        "poll_id": "integer",
+        "answer_id": "integer",
+        "is_successful": false
+      }
+    }
+  }
+}

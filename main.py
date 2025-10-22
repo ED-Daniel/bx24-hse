@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from app.config import settings
-from app.routers import logs, bitrix24
+from app.routers import logs, bitrix24, integration
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -11,6 +11,7 @@ app = FastAPI(
 # Include routers
 app.include_router(logs.router, prefix="/api/v1")
 app.include_router(bitrix24.router, prefix="/api/v1")
+app.include_router(integration.router, prefix="/api/v1")
 
 
 @app.get("/")

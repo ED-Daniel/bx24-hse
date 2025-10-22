@@ -1,0 +1,423 @@
+{
+    "result": {
+        "NAME": {
+            "FIELD_ID": "NAME",
+            "SORT": 10,
+            "NAME": "\u041d\u0430\u0437\u0432\u0430\u043d\u0438\u0435",
+            "IS_REQUIRED": "Y",
+            "MULTIPLE": "N",
+            "DEFAULT_VALUE": "",
+            "TYPE": "NAME",
+            "PROPERTY_TYPE": false,
+            "PROPERTY_USER_TYPE": false,
+            "SETTINGS": false,
+            "IBLOCK_ID": 18
+        },
+        "PROPERTY_73": {
+            "FIELD_ID": "PROPERTY_73",
+            "SORT": 20,
+            "NAME": "ID \u041e\u0431\u0440\u0430\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044c\u043d\u043e\u0439 \u043f\u0440\u043e\u0433\u0440\u0430\u043c\u043c\u044b (\u0432\u043d\u0435\u0448\u043d\u0438\u0439)",
+            "IS_REQUIRED": "Y",
+            "MULTIPLE": "N",
+            "DEFAULT_VALUE": "",
+            "TYPE": "S",
+            "PROPERTY_TYPE": "S",
+            "PROPERTY_USER_TYPE": false,
+            "CODE": "EDUCATIONAL_PROGRAM_ID",
+            "ID": "73",
+            "LINK_IBLOCK_ID": null,
+            "ROW_COUNT": "1",
+            "COL_COUNT": "30",
+            "USER_TYPE_SETTINGS": null,
+            "SETTINGS": {
+                "SHOW_ADD_FORM": "Y",
+                "SHOW_EDIT_FORM": "Y",
+                "ADD_READ_ONLY_FIELD": "N",
+                "EDIT_READ_ONLY_FIELD": "N",
+                "SHOW_FIELD_PREVIEW": "N"
+            },
+            "IBLOCK_ID": 18
+        },
+        "PROPERTY_67": {
+            "FIELD_ID": "PROPERTY_67",
+            "SORT": 30,
+            "NAME": "\u0421\u0441\u044b\u043b\u043a\u0430 \u043d\u0430 \u043e\u0431\u0440\u0430\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044c\u043d\u0443\u044e \u043f\u0440\u043e\u0433\u0440\u0430\u043c\u043c\u0443",
+            "IS_REQUIRED": "N",
+            "MULTIPLE": "N",
+            "DEFAULT_VALUE": null,
+            "TYPE": "S",
+            "PROPERTY_TYPE": "S",
+            "PROPERTY_USER_TYPE": false,
+            "CODE": "PROGRAM_URL",
+            "ID": "67",
+            "LINK_IBLOCK_ID": null,
+            "ROW_COUNT": "1",
+            "COL_COUNT": "30",
+            "USER_TYPE_SETTINGS": null,
+            "SETTINGS": {
+                "SHOW_ADD_FORM": "Y",
+                "SHOW_EDIT_FORM": "Y",
+                "ADD_READ_ONLY_FIELD": "N",
+                "EDIT_READ_ONLY_FIELD": "N",
+                "SHOW_FIELD_PREVIEW": "N"
+            },
+            "IBLOCK_ID": 18
+        },
+        "PROPERTY_68": {
+            "FIELD_ID": "PROPERTY_68",
+            "SORT": 40,
+            "NAME": "\u042f\u0437\u044b\u043a",
+            "IS_REQUIRED": "N",
+            "MULTIPLE": "N",
+            "DEFAULT_VALUE": "",
+            "TYPE": "E:EList",
+            "PROPERTY_TYPE": "E",
+            "PROPERTY_USER_TYPE": {
+                "PROPERTY_TYPE": "E",
+                "USER_TYPE": "EList",
+                "DESCRIPTION": "\u041f\u0440\u0438\u0432\u044f\u0437\u043a\u0430 \u043a \u044d\u043b\u0435\u043c\u0435\u043d\u0442\u0430\u043c \u0432 \u0432\u0438\u0434\u0435 \u0441\u043f\u0438\u0441\u043a\u0430",
+                "GetPropertyFieldHtml": [
+                    "CIBlockPropertyElementList",
+                    "GetPropertyFieldHtml"
+                ],
+                "GetPropertyFieldHtmlMulty": [
+                    "CIBlockPropertyElementList",
+                    "GetPropertyFieldHtmlMulty"
+                ],
+                "GetPublicEditHTML": [
+                    "CIBlockPropertyElementList",
+                    "GetPropertyFieldHtml"
+                ],
+                "GetPublicEditHTMLMulty": [
+                    "CIBlockPropertyElementList",
+                    "GetPropertyFieldHtmlMulty"
+                ],
+                "GetPublicViewHTML": [
+                    "CIBlockPropertyElementList",
+                    "GetPublicViewHTML"
+                ],
+                "GetUIFilterProperty": [
+                    "CIBlockPropertyElementList",
+                    "GetUIFilterProperty"
+                ],
+                "GetAdminFilterHTML": [
+                    "CIBlockPropertyElementList",
+                    "GetAdminFilterHTML"
+                ],
+                "PrepareSettings": [
+                    "CIBlockPropertyElementList",
+                    "PrepareSettings"
+                ],
+                "GetSettingsHTML": [
+                    "CIBlockPropertyElementList",
+                    "GetSettingsHTML"
+                ],
+                "GetExtendedValue": [
+                    "CIBlockPropertyElementList",
+                    "GetExtendedValue"
+                ],
+                "GetUIEntityEditorProperty": [
+                    "CIBlockPropertyElementList",
+                    "GetUIEntityEditorProperty"
+                ]
+            },
+            "CODE": "LANGUAGE_ID",
+            "ID": "68",
+            "LINK_IBLOCK_ID": "19",
+            "ROW_COUNT": "1",
+            "COL_COUNT": "30",
+            "USER_TYPE_SETTINGS": {
+                "size": 1,
+                "width": 0,
+                "group": "N",
+                "multiple": "N"
+            },
+            "SETTINGS": {
+                "SHOW_ADD_FORM": "Y",
+                "SHOW_EDIT_FORM": "Y",
+                "EDIT_READ_ONLY_FIELD": "N",
+                "SHOW_FIELD_PREVIEW": "N"
+            },
+            "IBLOCK_ID": 18,
+            "DISPLAY_VALUES_FORM": []
+        },
+        "PROPERTY_69": {
+            "FIELD_ID": "PROPERTY_69",
+            "SORT": 50,
+            "NAME": "\u041a\u0430\u043c\u043f\u0443\u0441",
+            "IS_REQUIRED": "N",
+            "MULTIPLE": "N",
+            "DEFAULT_VALUE": "",
+            "TYPE": "E:EList",
+            "PROPERTY_TYPE": "E",
+            "PROPERTY_USER_TYPE": {
+                "PROPERTY_TYPE": "E",
+                "USER_TYPE": "EList",
+                "DESCRIPTION": "\u041f\u0440\u0438\u0432\u044f\u0437\u043a\u0430 \u043a \u044d\u043b\u0435\u043c\u0435\u043d\u0442\u0430\u043c \u0432 \u0432\u0438\u0434\u0435 \u0441\u043f\u0438\u0441\u043a\u0430",
+                "GetPropertyFieldHtml": [
+                    "CIBlockPropertyElementList",
+                    "GetPropertyFieldHtml"
+                ],
+                "GetPropertyFieldHtmlMulty": [
+                    "CIBlockPropertyElementList",
+                    "GetPropertyFieldHtmlMulty"
+                ],
+                "GetPublicEditHTML": [
+                    "CIBlockPropertyElementList",
+                    "GetPropertyFieldHtml"
+                ],
+                "GetPublicEditHTMLMulty": [
+                    "CIBlockPropertyElementList",
+                    "GetPropertyFieldHtmlMulty"
+                ],
+                "GetPublicViewHTML": [
+                    "CIBlockPropertyElementList",
+                    "GetPublicViewHTML"
+                ],
+                "GetUIFilterProperty": [
+                    "CIBlockPropertyElementList",
+                    "GetUIFilterProperty"
+                ],
+                "GetAdminFilterHTML": [
+                    "CIBlockPropertyElementList",
+                    "GetAdminFilterHTML"
+                ],
+                "PrepareSettings": [
+                    "CIBlockPropertyElementList",
+                    "PrepareSettings"
+                ],
+                "GetSettingsHTML": [
+                    "CIBlockPropertyElementList",
+                    "GetSettingsHTML"
+                ],
+                "GetExtendedValue": [
+                    "CIBlockPropertyElementList",
+                    "GetExtendedValue"
+                ],
+                "GetUIEntityEditorProperty": [
+                    "CIBlockPropertyElementList",
+                    "GetUIEntityEditorProperty"
+                ]
+            },
+            "CODE": "CAMPUS_ID",
+            "ID": "69",
+            "LINK_IBLOCK_ID": "20",
+            "ROW_COUNT": "1",
+            "COL_COUNT": "30",
+            "USER_TYPE_SETTINGS": {
+                "size": 1,
+                "width": 0,
+                "group": "N",
+                "multiple": "N"
+            },
+            "SETTINGS": {
+                "SHOW_ADD_FORM": "Y",
+                "SHOW_EDIT_FORM": "Y",
+                "EDIT_READ_ONLY_FIELD": "N",
+                "SHOW_FIELD_PREVIEW": "N"
+            },
+            "IBLOCK_ID": 18,
+            "DISPLAY_VALUES_FORM": []
+        },
+        "PROPERTY_70": {
+            "FIELD_ID": "PROPERTY_70",
+            "SORT": 60,
+            "NAME": "\u041e\u0442\u0432\u0435\u0442\u0441\u0442\u0432\u0435\u043d\u043d\u044b\u0439 \u0437\u0430 \u043e\u0431\u0440\u0430\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044c\u043d\u0443\u044e \u043f\u0440\u043e\u0433\u0440\u0430\u043c\u043c\u0443",
+            "IS_REQUIRED": "N",
+            "MULTIPLE": "N",
+            "DEFAULT_VALUE": null,
+            "TYPE": "S:employee",
+            "PROPERTY_TYPE": "S",
+            "PROPERTY_USER_TYPE": {
+                "PROPERTY_TYPE": "S",
+                "USER_TYPE": "employee",
+                "DESCRIPTION": "\u041f\u0440\u0438\u0432\u044f\u0437\u043a\u0430 \u043a \u0441\u043e\u0442\u0440\u0443\u0434\u043d\u0438\u043a\u0443",
+                "GetPropertyFieldHtml": [
+                    "CIBlockPropertyEmployee",
+                    "GetPropertyFieldHtml"
+                ],
+                "GetPropertyFieldHtmlMulty": [
+                    "CIBlockPropertyEmployee",
+                    "GetPropertyFieldHtmlMulty"
+                ],
+                "GetAdminListViewHTML": [
+                    "CIBlockPropertyEmployee",
+                    "getAdminListViewHtmlExtended"
+                ],
+                "GetPublicViewHTML": [
+                    "CIBlockPropertyEmployee",
+                    "getPublicViewHtmlExtended"
+                ],
+                "GetPublicEditHTML": [
+                    "CIBlockPropertyEmployee",
+                    "GetPublicEditHTML"
+                ],
+                "GetPublicEditHTMLMulty": [
+                    "CIBlockPropertyEmployee",
+                    "GetPublicEditHTMLMulty"
+                ],
+                "GetPublicFilterHTML": [
+                    "CIBlockPropertyEmployee",
+                    "GetPublicFilterHTML"
+                ],
+                "GetUIFilterProperty": [
+                    "CIBlockPropertyEmployee",
+                    "GetUIFilterProperty"
+                ],
+                "ConvertToDB": [
+                    "CIBlockPropertyEmployee",
+                    "ConvertFromToDB"
+                ],
+                "CheckFields": [
+                    "CIBlockPropertyEmployee",
+                    "CheckFields"
+                ],
+                "GetLength": [
+                    "CIBlockPropertyEmployee",
+                    "GetLength"
+                ],
+                "GetUIEntityEditorProperty": [
+                    "CIBlockPropertyEmployee",
+                    "GetUIEntityEditorProperty"
+                ],
+                "GetUIEntityEditorPropertyEditHtml": [
+                    "CIBlockPropertyEmployee",
+                    "GetUIEntityEditorPropertyEditHtml"
+                ],
+                "GetUIEntityEditorPropertyViewHtml": [
+                    "CIBlockPropertyEmployee",
+                    "GetUIEntityEditorPropertyViewHtml"
+                ]
+            },
+            "CODE": "OWNER_ID",
+            "ID": "70",
+            "LINK_IBLOCK_ID": null,
+            "ROW_COUNT": "1",
+            "COL_COUNT": "30",
+            "USER_TYPE_SETTINGS": false,
+            "SETTINGS": {
+                "SHOW_ADD_FORM": "Y",
+                "SHOW_EDIT_FORM": "Y",
+                "ADD_READ_ONLY_FIELD": "N",
+                "EDIT_READ_ONLY_FIELD": "N",
+                "SHOW_FIELD_PREVIEW": "N"
+            },
+            "IBLOCK_ID": 18
+        },
+        "PROPERTY_71": {
+            "FIELD_ID": "PROPERTY_71",
+            "SORT": 70,
+            "NAME": "\u0424\u043e\u0440\u043c\u0430\u0442 \u043e\u0431\u0443\u0447\u0435\u043d\u0438\u044f",
+            "IS_REQUIRED": "N",
+            "MULTIPLE": "N",
+            "DEFAULT_VALUE": "",
+            "TYPE": "E:EList",
+            "PROPERTY_TYPE": "E",
+            "PROPERTY_USER_TYPE": {
+                "PROPERTY_TYPE": "E",
+                "USER_TYPE": "EList",
+                "DESCRIPTION": "\u041f\u0440\u0438\u0432\u044f\u0437\u043a\u0430 \u043a \u044d\u043b\u0435\u043c\u0435\u043d\u0442\u0430\u043c \u0432 \u0432\u0438\u0434\u0435 \u0441\u043f\u0438\u0441\u043a\u0430",
+                "GetPropertyFieldHtml": [
+                    "CIBlockPropertyElementList",
+                    "GetPropertyFieldHtml"
+                ],
+                "GetPropertyFieldHtmlMulty": [
+                    "CIBlockPropertyElementList",
+                    "GetPropertyFieldHtmlMulty"
+                ],
+                "GetPublicEditHTML": [
+                    "CIBlockPropertyElementList",
+                    "GetPropertyFieldHtml"
+                ],
+                "GetPublicEditHTMLMulty": [
+                    "CIBlockPropertyElementList",
+                    "GetPropertyFieldHtmlMulty"
+                ],
+                "GetPublicViewHTML": [
+                    "CIBlockPropertyElementList",
+                    "GetPublicViewHTML"
+                ],
+                "GetUIFilterProperty": [
+                    "CIBlockPropertyElementList",
+                    "GetUIFilterProperty"
+                ],
+                "GetAdminFilterHTML": [
+                    "CIBlockPropertyElementList",
+                    "GetAdminFilterHTML"
+                ],
+                "PrepareSettings": [
+                    "CIBlockPropertyElementList",
+                    "PrepareSettings"
+                ],
+                "GetSettingsHTML": [
+                    "CIBlockPropertyElementList",
+                    "GetSettingsHTML"
+                ],
+                "GetExtendedValue": [
+                    "CIBlockPropertyElementList",
+                    "GetExtendedValue"
+                ],
+                "GetUIEntityEditorProperty": [
+                    "CIBlockPropertyElementList",
+                    "GetUIEntityEditorProperty"
+                ]
+            },
+            "CODE": "EDUCATION_FORM_ID",
+            "ID": "71",
+            "LINK_IBLOCK_ID": "21",
+            "ROW_COUNT": "1",
+            "COL_COUNT": "30",
+            "USER_TYPE_SETTINGS": {
+                "size": 1,
+                "width": 0,
+                "group": "N",
+                "multiple": "N"
+            },
+            "SETTINGS": {
+                "SHOW_ADD_FORM": "Y",
+                "SHOW_EDIT_FORM": "Y",
+                "EDIT_READ_ONLY_FIELD": "N",
+                "SHOW_FIELD_PREVIEW": "N"
+            },
+            "IBLOCK_ID": 18,
+            "DISPLAY_VALUES_FORM": []
+        },
+        "PROPERTY_72": {
+            "FIELD_ID": "PROPERTY_72",
+            "SORT": 80,
+            "NAME": "\u0421\u0442\u0430\u0442\u0443\u0441",
+            "IS_REQUIRED": "N",
+            "MULTIPLE": "N",
+            "DEFAULT_VALUE": "57",
+            "TYPE": "L",
+            "PROPERTY_TYPE": "L",
+            "PROPERTY_USER_TYPE": false,
+            "CODE": "STATUS",
+            "ID": "72",
+            "LINK_IBLOCK_ID": null,
+            "ROW_COUNT": "1",
+            "COL_COUNT": "30",
+            "USER_TYPE_SETTINGS": null,
+            "SETTINGS": {
+                "SHOW_ADD_FORM": "Y",
+                "SHOW_EDIT_FORM": "Y",
+                "ADD_READ_ONLY_FIELD": "N",
+                "EDIT_READ_ONLY_FIELD": "N",
+                "SHOW_FIELD_PREVIEW": "N"
+            },
+            "IBLOCK_ID": 18,
+            "DISPLAY_VALUES_FORM": {
+                "56": "\u0410\u043a\u0442\u0438\u0432\u043d\u0430\u044f",
+                "57": "\u041d\u0435\u0430\u043a\u0442\u0438\u0432\u043d\u0430\u044f"
+            }
+        }
+    },
+    "time": {
+        "start": 1761163800,
+        "finish": 1761163800.052521,
+        "duration": 0.0525209903717041,
+        "processing": 0,
+        "date_start": "2025-10-22T23:10:00+03:00",
+        "date_finish": "2025-10-22T23:10:00+03:00"
+    }
+}

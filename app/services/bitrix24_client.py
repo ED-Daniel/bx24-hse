@@ -284,6 +284,84 @@ class Bitrix24Client:
         params = {"id": deal_id}
         return self._make_request("crm.deal.delete", params)
 
+    # ==================== UNIVERSAL LISTS ====================
+
+    def get_list_elements(
+        self,
+        iblock_id: int,
+        filter: Optional[Dict[str, Any]] = None,
+        select: Optional[List[str]] = None
+    ) -> Dict[str, Any]:
+        """
+        Получить элементы универсального списка
+
+        Args:
+            iblock_id: ID списка (инфоблока)
+            filter: Фильтр (например, {'=PROPERTY_64': '123'})
+            select: Список полей для выборки
+
+        Returns:
+            Словарь с результатами
+        """
+        params = {
+            "IBLOCK_TYPE_ID": "lists",
+            "IBLOCK_ID": iblock_id
+        }
+        if filter:
+            params["FILTER"] = filter
+        if select:
+            params["SELECT"] = select
+
+        return self._make_request("lists.element.get", params)
+
+    def create_list_element(
+        self,
+        iblock_id: int,
+        fields: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """
+        Создать элемент универсального списка
+
+        Args:
+            iblock_id: ID списка (инфоблока)
+            fields: Поля элемента
+
+        Returns:
+            ID созданного элемента
+        """
+        params = {
+            "IBLOCK_TYPE_ID": "lists",
+            "IBLOCK_ID": iblock_id,
+            "ELEMENT_CODE": fields.get("CODE"),
+            "FIELDS": fields
+        }
+        return self._make_request("lists.element.add", params)
+
+    def update_list_element(
+        self,
+        iblock_id: int,
+        element_id: int,
+        fields: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """
+        Обновить элемент универсального списка
+
+        Args:
+            iblock_id: ID списка (инфоблока)
+            element_id: ID элемента
+            fields: Поля для обновления
+
+        Returns:
+            Результат обновления
+        """
+        params = {
+            "IBLOCK_TYPE_ID": "lists",
+            "IBLOCK_ID": iblock_id,
+            "ELEMENT_ID": element_id,
+            "FIELDS": fields
+        }
+        return self._make_request("lists.element.update", params)
+
 
 # Создаем глобальный экземпляр клиента
 bitrix24_client = Bitrix24Client()
