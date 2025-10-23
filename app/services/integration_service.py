@@ -10,13 +10,13 @@
 
 import json
 import logging
-from typing import Optional, Dict, Any, List, Tuple
 from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple
 
-from app.services.bitrix24_client import bitrix24_client
-from app.schemas.webhook import WebhookPayload, WebhookData, Analytics
-from app.schemas.bitrix import BitrixMultifield
 from app.config import settings
+from app.schemas.bitrix import BitrixMultifield
+from app.schemas.webhook import Analytics, WebhookData, WebhookPayload
+from app.services.bitrix24_client import bitrix24_client
 from app.utils.cache import cache_manager
 
 # Настройка логирования
@@ -53,7 +53,7 @@ class BitrixIntegrationService:
         """Загрузить маппинг полей из field_mapping.json"""
         try:
             mapping_path = Path(__file__).parent.parent.parent / "field_mapping.json"
-            with open(mapping_path, 'r', encoding='utf-8') as f:
+            with open(mapping_path, "r", encoding="utf-8") as f:
                 self.field_mapping = json.load(f)
             logger.info("Field mapping loaded successfully")
         except Exception as e:
@@ -88,7 +88,7 @@ class BitrixIntegrationService:
             # Поиск в списке "Опросные формы" (IBLOCK_ID=17)
             result = self.client.get_list_elements(
                 iblock_id=self.POLL_FORMS_LIST_ID,
-                filter={f"={self.POLL_ID_PROPERTY}": str(poll_id)}
+                filter={f"={self.POLL_ID_PROPERTY}": str(poll_id)},
             )
 
             if result.get("result") and len(result["result"]) > 0:
@@ -98,10 +98,7 @@ class BitrixIntegrationService:
                 # Кешируем результат
                 if settings.CACHE_ENABLED:
                     self.cache.set(
-                        "poll_form",
-                        poll_id,
-                        poll_form,
-                        ttl=settings.CACHE_TTL_POLL_FORMS
+                        "poll_form", poll_id, poll_form, ttl=settings.CACHE_TTL_POLL_FORMS
                     )
 
                 return poll_form
@@ -122,7 +119,7 @@ class BitrixIntegrationService:
         lastname: Optional[str] = None,
         middlename: Optional[str] = None,
         phone: Optional[str] = None,
-        analytics: Optional[Analytics] = None
+        analytics: Optional[Analytics] = None,
     ) -> int:
         """
         Поиск контакта по email, если не найден - создание нового
@@ -143,8 +140,7 @@ class BitrixIntegrationService:
         # Шаг 1: Поиск контакта по email
         try:
             result = self.client.get_contacts(
-                filter={"EMAIL": email},
-                select=["ID", "NAME", "LAST_NAME", "EMAIL"]
+                filter={"EMAIL": email}, select=["ID", "NAME", "LAST_NAME", "EMAIL"]
             )
 
             if result.get("result") and len(result["result"]) > 0:
@@ -162,7 +158,7 @@ class BitrixIntegrationService:
             "NAME": firstname or "",
             "LAST_NAME": lastname or "",
             "SECOND_NAME": middlename or "",
-            "EMAIL": [{"VALUE": email, "VALUE_TYPE": "WORK"}]
+            "EMAIL": [{"VALUE": email, "VALUE_TYPE": "WORK"}],
         }
 
         # Добавляем телефон, если указан
@@ -171,13 +167,15 @@ class BitrixIntegrationService:
 
         # Добавляем UTM метки из аналитики
         if analytics and analytics.params:
-            contact_fields.update({
-                "UTM_SOURCE": analytics.params.utm_source,
-                "UTM_MEDIUM": analytics.params.utm_medium,
-                "UTM_CAMPAIGN": analytics.params.utm_campaign,
-                "UTM_CONTENT": analytics.params.utm_content,
-                "UTM_TERM": analytics.params.utm_term
-            })
+            contact_fields.update(
+                {
+                    "UTM_SOURCE": analytics.params.utm_source,
+                    "UTM_MEDIUM": analytics.params.utm_medium,
+                    "UTM_CAMPAIGN": analytics.params.utm_campaign,
+                    "UTM_CONTENT": analytics.params.utm_content,
+                    "UTM_TERM": analytics.params.utm_term,
+                }
+            )
 
         try:
             result = self.client.create_contact(contact_fields)
@@ -191,10 +189,7 @@ class BitrixIntegrationService:
 
     # ==================== STEP 3: Find Educational Programs ====================
 
-    def find_educational_programs(
-        self,
-        program_names: List[str]
-    ) -> List[Dict[str, Any]]:
+    def find_educational_programs(self, program_names: List[str]) -> List[Dict[str, Any]]:
         """
         Поиск образовательных программ по названиям
 
@@ -243,13 +238,12 @@ class BitrixIntegrationService:
                 for program_name in programs_to_search:
                     if program_name in batch_results:
                         program = batch_results[program_name]
-                        program_data = {
-                            "ID": program.get("ID"),
-                            "NAME": program.get("NAME")
-                        }
+                        program_data = {"ID": program.get("ID"), "NAME": program.get("NAME")}
                         found_programs.append(program_data)
                         programs_found_in_batch.append(program_name)
-                        logger.info(f"Program found (batch): {program_name} (ID={program.get('ID')})")
+                        logger.info(
+                            f"Program found (batch): {program_name} (ID={program.get('ID')})"
+                        )
 
                         # Кешируем
                         if settings.CACHE_ENABLED:
@@ -257,12 +251,14 @@ class BitrixIntegrationService:
                                 "educational_program",
                                 program_name,
                                 program_data,
-                                ttl=settings.CACHE_TTL_EDUCATIONAL_PROGRAMS
+                                ttl=settings.CACHE_TTL_EDUCATIONAL_PROGRAMS,
                             )
 
                 # Обновляем список программ для последовательного поиска
                 # Ищем только те, которые не нашли через batch
-                programs_to_search = [p for p in programs_to_search if p not in programs_found_in_batch]
+                programs_to_search = [
+                    p for p in programs_to_search if p not in programs_found_in_batch
+                ]
 
             except Exception as e:
                 logger.warning(f"Batch request failed, falling back to sequential: {e}")
@@ -273,16 +269,12 @@ class BitrixIntegrationService:
             try:
                 # Поиск в списке "Образовательные программы" (IBLOCK_ID=18)
                 result = self.client.get_list_elements(
-                    iblock_id=self.EDUCATIONAL_PROGRAMS_LIST_ID,
-                    filter={"NAME": program_name}
+                    iblock_id=self.EDUCATIONAL_PROGRAMS_LIST_ID, filter={"NAME": program_name}
                 )
 
                 if result.get("result") and len(result["result"]) > 0:
                     program = result["result"][0]
-                    program_data = {
-                        "ID": program.get("ID"),
-                        "NAME": program.get("NAME")
-                    }
+                    program_data = {"ID": program.get("ID"), "NAME": program.get("NAME")}
                     found_programs.append(program_data)
                     logger.info(f"Program found: {program_name} (ID={program.get('ID')})")
 
@@ -292,7 +284,7 @@ class BitrixIntegrationService:
                             "educational_program",
                             program_name,
                             program_data,
-                            ttl=settings.CACHE_TTL_EDUCATIONAL_PROGRAMS
+                            ttl=settings.CACHE_TTL_EDUCATIONAL_PROGRAMS,
                         )
                 else:
                     not_found.append(program_name)
@@ -313,10 +305,7 @@ class BitrixIntegrationService:
     # ==================== STEP 4: Find or Create Deal ====================
 
     def find_or_create_deal(
-        self,
-        contact_id: int,
-        program_id: Optional[int] = None,
-        poll_form_id: Optional[int] = None
+        self, contact_id: int, program_id: Optional[int] = None, poll_form_id: Optional[int] = None
     ) -> Tuple[int, bool]:
         """
         Поиск сделки по CONTACT_ID и образовательной программе,
@@ -342,7 +331,7 @@ class BitrixIntegrationService:
 
             result = self.client.get_deals(
                 filter=filter_params,
-                select=["ID", "TITLE", "CONTACT_IDS", self.DEAL_EDUCATIONAL_PROGRAM_FIELD]
+                select=["ID", "TITLE", "CONTACT_IDS", self.DEAL_EDUCATIONAL_PROGRAM_FIELD],
             )
 
             if result.get("result") and len(result["result"]) > 0:
@@ -358,7 +347,7 @@ class BitrixIntegrationService:
 
         deal_fields = {
             "TITLE": f"Регистрация на опрос #{poll_form_id}" if poll_form_id else "Регистрация",
-            "CONTACT_IDS": [contact_id]
+            "CONTACT_IDS": [contact_id],
         }
 
         # Добавляем образовательную программу, если указана
@@ -395,8 +384,16 @@ class BitrixIntegrationService:
         # Фильтруем стандартные поля
         # hse_school - это дополнительное поле, которое должно сохраняться в JSON
         standard_fields = {
-            'firstname', 'lastname', 'middlename', 'email', 'telephone',
-            'birthdate', 'address', 'city', 'country', 'educational_program_1'
+            "firstname",
+            "lastname",
+            "middlename",
+            "email",
+            "telephone",
+            "birthdate",
+            "address",
+            "city",
+            "country",
+            "educational_program_1",
         }
 
         # Собираем все дополнительные поля
@@ -408,9 +405,7 @@ class BitrixIntegrationService:
         return additional_fields
 
     def _build_deal_comment(
-        self,
-        analytics: Optional[Analytics],
-        additional_fields: Dict[str, Any]
+        self, analytics: Optional[Analytics], additional_fields: Dict[str, Any]
     ) -> str:
         """
         Создание JSON комментария для сделки
@@ -444,7 +439,7 @@ class BitrixIntegrationService:
                 "ip": analytics.ip,
                 "url": analytics.url,
                 "date": analytics.date,
-                "timeZone": analytics.timeZone
+                "timeZone": analytics.timeZone,
             }
 
             # Добавляем mailingListSubscription если есть
@@ -460,7 +455,7 @@ class BitrixIntegrationService:
         deal_id: int,
         data: WebhookData,
         analytics: Optional[Analytics] = None,
-        additional_fields: Optional[Dict[str, Any]] = None
+        additional_fields: Optional[Dict[str, Any]] = None,
     ) -> bool:
         """
         Обогащение сделки дополнительными данными
@@ -486,13 +481,15 @@ class BitrixIntegrationService:
 
         # Добавляем UTM метки
         if analytics and analytics.params:
-            update_fields.update({
-                "UTM_SOURCE": analytics.params.utm_source,
-                "UTM_MEDIUM": analytics.params.utm_medium,
-                "UTM_CAMPAIGN": analytics.params.utm_campaign,
-                "UTM_CONTENT": analytics.params.utm_content,
-                "UTM_TERM": analytics.params.utm_term
-            })
+            update_fields.update(
+                {
+                    "UTM_SOURCE": analytics.params.utm_source,
+                    "UTM_MEDIUM": analytics.params.utm_medium,
+                    "UTM_CAMPAIGN": analytics.params.utm_campaign,
+                    "UTM_CONTENT": analytics.params.utm_content,
+                    "UTM_TERM": analytics.params.utm_term,
+                }
+            )
 
         # Добавляем Roistat ID
         if analytics and analytics.cookies and analytics.cookies.roistat_visit:
@@ -509,7 +506,9 @@ class BitrixIntegrationService:
         # Обновляем сделку
         try:
             self.client.update_deal(deal_id, update_fields)
-            logger.info(f"Deal {deal_id} enriched successfully with {len(additional_fields)} additional fields")
+            logger.info(
+                f"Deal {deal_id} enriched successfully with {len(additional_fields)} additional fields"
+            )
             return True
 
         except Exception as e:
@@ -570,7 +569,7 @@ class BitrixIntegrationService:
             "poll_form_id": None,
             "contact_id": None,
             "deals": [],
-            "total_deals": 0
+            "total_deals": 0,
         }
 
         try:
@@ -604,7 +603,7 @@ class BitrixIntegrationService:
                 lastname=payload.data.lastname,
                 middlename=payload.data.middlename,
                 phone=payload.data.telephone,
-                analytics=payload.header_data.analytics
+                analytics=payload.header_data.analytics,
             )
             result["contact_id"] = contact_id
 
@@ -616,7 +615,9 @@ class BitrixIntegrationService:
 
             # ========== ШАГ 4: Обработка образовательных программ ==========
             if payload.data.educational_program_1 and len(payload.data.educational_program_1) > 0:
-                logger.info(f"\n🎓 STEP 4: Processing {len(payload.data.educational_program_1)} educational programs...")
+                logger.info(
+                    f"\n🎓 STEP 4: Processing {len(payload.data.educational_program_1)} educational programs..."
+                )
 
                 # Поиск всех программ сразу (404 если хоть одна не найдена)
                 programs = self.find_educational_programs(payload.data.educational_program_1)
@@ -634,7 +635,7 @@ class BitrixIntegrationService:
                     deal_id, is_new = self.find_or_create_deal(
                         contact_id=contact_id,
                         program_id=program_id,
-                        poll_form_id=poll_form.get("ID")
+                        poll_form_id=poll_form.get("ID"),
                     )
 
                     deal_status = "Created new" if is_new else "Found existing"
@@ -647,28 +648,30 @@ class BitrixIntegrationService:
                         deal_id=deal_id,
                         data=payload.data,
                         analytics=payload.header_data.analytics,
-                        additional_fields=additional_fields
+                        additional_fields=additional_fields,
                     )
                     logger.info(f"      ✅ Deal enriched successfully")
 
                     # Сохраняем результат
-                    result["deals"].append({
-                        "program_name": program_name,
-                        "program_id": program_id,
-                        "deal_id": deal_id,
-                        "is_new": is_new
-                    })
+                    result["deals"].append(
+                        {
+                            "program_name": program_name,
+                            "program_id": program_id,
+                            "deal_id": deal_id,
+                            "is_new": is_new,
+                        }
+                    )
 
                 result["total_deals"] = len(result["deals"])
 
             else:
                 # Нет образовательных программ - создаем одну сделку без программы
-                logger.info("\n📝 STEP 4: No educational programs specified, creating generic deal...")
+                logger.info(
+                    "\n📝 STEP 4: No educational programs specified, creating generic deal..."
+                )
 
                 deal_id, is_new = self.find_or_create_deal(
-                    contact_id=contact_id,
-                    program_id=None,
-                    poll_form_id=poll_form.get("ID")
+                    contact_id=contact_id, program_id=None, poll_form_id=poll_form.get("ID")
                 )
 
                 logger.info(f"✅ Deal {'created' if is_new else 'found'}: ID={deal_id}")
@@ -678,15 +681,17 @@ class BitrixIntegrationService:
                     deal_id=deal_id,
                     data=payload.data,
                     analytics=payload.header_data.analytics,
-                    additional_fields=additional_fields
+                    additional_fields=additional_fields,
                 )
 
-                result["deals"].append({
-                    "program_name": "Общая сделка",
-                    "program_id": None,
-                    "deal_id": deal_id,
-                    "is_new": is_new
-                })
+                result["deals"].append(
+                    {
+                        "program_name": "Общая сделка",
+                        "program_id": None,
+                        "deal_id": deal_id,
+                        "is_new": is_new,
+                    }
+                )
                 result["total_deals"] = 1
 
             # ========== ЗАВЕРШЕНИЕ ==========
@@ -695,7 +700,9 @@ class BitrixIntegrationService:
             logger.info(f"   Contact ID: {result['contact_id']}")
             logger.info(f"   Total Deals: {result['total_deals']}")
             for deal in result["deals"]:
-                logger.info(f"   - Deal {deal['deal_id']}: {deal['program_name']} ({"NEW" if deal['is_new'] else "EXISTING"})")
+                logger.info(
+                    f"   - Deal {deal['deal_id']}: {deal['program_name']} ({"NEW" if deal['is_new'] else "EXISTING"})"
+                )
             logger.info("=" * 70)
 
             return result

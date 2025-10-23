@@ -6,30 +6,28 @@
 - POST /postAnswer - Обработка ответа из опросной формы
 """
 
-from fastapi import APIRouter, HTTPException, Body, status
-from typing import Dict, Any
 import logging
+from typing import Any, Dict
 
-from app.services.integration_service import integration_service
-from app.schemas.webhook import WebhookPayload
+from fastapi import APIRouter, Body, HTTPException, status
+
 from app.schemas.integration import (
+    PostAnswerResponse,
     PostPollRequest,
     PostPollResponse,
-    PostAnswerResponse,
-    create_success_poll_response,
+    create_error_answer_response,
     create_error_poll_response,
     create_success_answer_response,
-    create_error_answer_response
+    create_success_poll_response,
 )
+from app.schemas.webhook import WebhookPayload
+from app.services.integration_service import integration_service
 
 # Настройка логирования
 logger = logging.getLogger(__name__)
 
 # Создание роутера
-router = APIRouter(
-    prefix="/integration",
-    tags=["integration"]
-)
+router = APIRouter(prefix="/integration", tags=["integration"])
 
 
 @router.post("/postPoll", response_model=PostPollResponse)
@@ -83,7 +81,7 @@ async def post_poll(request: PostPollRequest):
                 logger.info(f"✅ Poll form already exists: Bitrix ID={existing_form.get('ID')}")
                 return create_success_poll_response(
                     poll_id=request.poll_id,
-                    message=f"Связанная опросная форма для ID {request.poll_id} уже существует в CRM"
+                    message=f"Связанная опросная форма для ID {request.poll_id} уже существует в CRM",
                 )
         except Exception:
             # Форма не найдена - создаем новую
@@ -93,12 +91,11 @@ async def post_poll(request: PostPollRequest):
         fields = {
             "NAME": request.poll_name,
             "PROPERTY_64": str(request.poll_id),  # POLL_ID
-            "PREVIEW_TEXT": f"Язык: {request.poll_language}, Создан: {request.employee_email}"
+            "PREVIEW_TEXT": f"Язык: {request.poll_language}, Создан: {request.employee_email}",
         }
 
         result = integration_service.client.create_list_element(
-            iblock_id=integration_service.POLL_FORMS_LIST_ID,
-            fields=fields
+            iblock_id=integration_service.POLL_FORMS_LIST_ID, fields=fields
         )
 
         if result.get("result"):
@@ -113,10 +110,7 @@ async def post_poll(request: PostPollRequest):
 
     except Exception as e:
         logger.error(f"❌ Error creating poll form: {e}")
-        return create_error_poll_response(
-            poll_id=request.poll_id,
-            description=str(e)
-        )
+        return create_error_poll_response(poll_id=request.poll_id, description=str(e))
 
 
 @router.post("/postAnswer", response_model=PostAnswerResponse)
@@ -223,9 +217,7 @@ async def post_answer(payload: WebhookPayload):
         logger.info(f"   {message}")
 
         return create_success_answer_response(
-            poll_id=result["poll_id"],
-            answer_id=result["answer_id"],
-            message=message
+            poll_id=result["poll_id"], answer_id=result["answer_id"], message=message
         )
 
     except Exception as e:
@@ -246,7 +238,7 @@ async def post_answer(payload: WebhookPayload):
         return create_error_answer_response(
             poll_id=payload.header_data.poll_id,
             answer_id=payload.header_data.answer_id,
-            description=error_message
+            description=error_message,
         )
 
 
@@ -268,12 +260,14 @@ async def health_check():
         has_mapping = bool(integration_service.field_mapping)
 
         # Проверяем константы
-        has_constants = all([
-            integration_service.POLL_FORMS_LIST_ID,
-            integration_service.EDUCATIONAL_PROGRAMS_LIST_ID,
-            integration_service.POLL_ID_PROPERTY,
-            integration_service.DEAL_EDUCATIONAL_PROGRAM_FIELD
-        ])
+        has_constants = all(
+            [
+                integration_service.POLL_FORMS_LIST_ID,
+                integration_service.EDUCATIONAL_PROGRAMS_LIST_ID,
+                integration_service.POLL_ID_PROPERTY,
+                integration_service.DEAL_EDUCATIONAL_PROGRAM_FIELD,
+            ]
+        )
 
         # Простая проверка доступности Bitrix24 API (пробуем получить пустой список контактов)
         try:
@@ -283,12 +277,14 @@ async def health_check():
             bitrix_available = False
 
         return {
-            "status": "healthy" if (has_mapping and has_constants and bitrix_available) else "degraded",
+            "status": (
+                "healthy" if (has_mapping and has_constants and bitrix_available) else "degraded"
+            ),
             "field_mapping_loaded": has_mapping,
             "constants_configured": has_constants,
             "bitrix24_api_available": bitrix_available,
             "service": "integration",
-            "version": "1.0.0"
+            "version": "1.0.0",
         }
 
     except Exception as e:
@@ -297,5 +293,5 @@ async def health_check():
             "status": "unhealthy",
             "error": str(e),
             "service": "integration",
-            "version": "1.0.0"
+            "version": "1.0.0",
         }

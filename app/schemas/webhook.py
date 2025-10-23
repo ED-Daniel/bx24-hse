@@ -4,12 +4,13 @@ Pydantic модели для входящих webhook запросов от си
 Структура основана на INTEGRATION.md и INTEGRATION_TASK.md
 """
 
-from pydantic import BaseModel, Field, EmailStr, field_validator
-from typing import Optional, Dict, Any, List
 from datetime import datetime
+from typing import Any, Dict, List, Optional
 
+from pydantic import BaseModel, EmailStr, Field, field_validator
 
 # ==================== Analytics Models ====================
+
 
 class UTMParams(BaseModel):
     """UTM параметры для отслеживания источника трафика"""
@@ -54,12 +55,12 @@ class Analytics(BaseModel):
     date: str = Field(..., description="Дата отправки ответа (формат: 'YYYY-MM-DD HH:MM')")
     timeZone: str = Field(..., description="Часовой пояс")
     mailingListSubscription: Optional[bool] = Field(
-        None,
-        description="Разрешение на рассылку рекламных материалов"
+        None, description="Разрешение на рассылку рекламных материалов"
     )
 
 
 # ==================== Header Data Models ====================
+
 
 class HeaderData(BaseModel):
     """Служебные данные о форме и ответе"""
@@ -68,25 +69,24 @@ class HeaderData(BaseModel):
     answer_id: int = Field(..., description="Уникальный ID ответа")
     create_time: datetime = Field(..., description="Дата и время создания ответа (ISO формат)")
     form_kind: Optional[int] = Field(
-        None,
-        description="Вид формы: null - не указано, 1 - консультация, 2 - регистрация"
+        None, description="Вид формы: null - не указано, 1 - консультация, 2 - регистрация"
     )
     gid: Optional[str] = Field(
-        None,
-        description="Сквозной ID группы контактов для внутренней группировки в CRM"
+        None, description="Сквозной ID группы контактов для внутренней группировки в CRM"
     )
     analytics: Analytics = Field(..., description="Аналитические данные")
 
-    @field_validator('form_kind')
+    @field_validator("form_kind")
     @classmethod
     def validate_form_kind(cls, v: Optional[int]) -> Optional[int]:
         """Проверка значения form_kind"""
         if v is not None and v not in [1, 2]:
-            raise ValueError('form_kind должен быть null, 1 (консультация) или 2 (регистрация)')
+            raise ValueError("form_kind должен быть null, 1 (консультация) или 2 (регистрация)")
         return v
 
 
 # ==================== Form Data Models ====================
+
 
 class WebhookData(BaseModel):
     """
@@ -113,8 +113,7 @@ class WebhookData(BaseModel):
 
     # Специфичные поля для образовательных программ
     educational_program_1: Optional[List[str]] = Field(
-        None,
-        description="Список выбранных образовательных программ"
+        None, description="Список выбранных образовательных программ"
     )
 
     # Additional fields (могут быть любыми)
@@ -130,7 +129,7 @@ class WebhookData(BaseModel):
     class Config:
         extra = "allow"  # Разрешаем дополнительные поля (question fields и другие)
 
-    @field_validator('educational_program_1', mode='before')
+    @field_validator("educational_program_1", mode="before")
     @classmethod
     def ensure_list(cls, v):
         """Убеждаемся, что educational_program_1 всегда список"""
@@ -142,6 +141,7 @@ class WebhookData(BaseModel):
 
 
 # ==================== Main Webhook Payload ====================
+
 
 class WebhookPayload(BaseModel):
     """
@@ -182,22 +182,22 @@ class WebhookPayload(BaseModel):
                             "utm_medium": "direct",
                             "utm_campaign": "direct",
                             "utm_term": "direct",
-                            "utm_content": "direct"
+                            "utm_content": "direct",
                         },
                         "cookies": {
                             "_ym_uid": "1607603521955414288",
                             "tracking": "ZEsUBF/Yq9OBi6j1G3IiAg",
                             "_ga": "GA1.2.564819297.1608023318",
                             "rete_uid": "a33d94e4-1da7-458d-89db-3cfadc6d687c",
-                            "roistat_visit": "8467460"
+                            "roistat_visit": "8467460",
                         },
                         "ip": "185.117.121.169",
                         "date": "2023-02-15 13:16",
                         "timeZone": "Europe/Moscow",
-                        "mailingListSubscription": True
+                        "mailingListSubscription": True,
                     },
                     "form_kind": 2,
-                    "gid": None
+                    "gid": None,
                 },
                 "data": {
                     "lastname": "Services TEST",
@@ -207,11 +207,8 @@ class WebhookPayload(BaseModel):
                     "additionalfield1": "Учащийся 9-10 классов",
                     "additionalfield3": "Москва",
                     "hse_school": "52",
-                    "educational_program_1": [
-                        "Цифровой юрист",
-                        "Античность"
-                    ],
-                    "middlename": "52"
-                }
+                    "educational_program_1": ["Цифровой юрист", "Античность"],
+                    "middlename": "52",
+                },
             }
         }

@@ -1,6 +1,8 @@
-import httpx
 import logging
-from typing import Optional, Dict, Any, List
+from typing import Any, Dict, List, Optional
+
+import httpx
+
 from app.config import settings
 from app.utils.retry import retry_on_network_error
 
@@ -20,12 +22,9 @@ class Bitrix24Client:
             self.client.close()
 
     @retry_on_network_error(
-        max_attempts=settings.BITRIX24_RETRY_MAX_ATTEMPTS,
-        delay=settings.BITRIX24_RETRY_DELAY
+        max_attempts=settings.BITRIX24_RETRY_MAX_ATTEMPTS, delay=settings.BITRIX24_RETRY_DELAY
     )
-    def _make_request(
-        self, method: str, params: Optional[Dict[str, Any]] = None
-    ) -> Dict[str, Any]:
+    def _make_request(self, method: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """
         Выполнить запрос к Bitrix24 API
 
@@ -66,7 +65,7 @@ class Bitrix24Client:
         self,
         filter: Optional[Dict[str, Any]] = None,
         select: Optional[List[str]] = None,
-        start: int = 0
+        start: int = 0,
     ) -> Dict[str, Any]:
         """
         Получить список контактов
@@ -146,7 +145,7 @@ class Bitrix24Client:
         self,
         filter: Optional[Dict[str, Any]] = None,
         select: Optional[List[str]] = None,
-        start: int = 0
+        start: int = 0,
     ) -> Dict[str, Any]:
         """
         Получить список лидов
@@ -226,7 +225,7 @@ class Bitrix24Client:
         self,
         filter: Optional[Dict[str, Any]] = None,
         select: Optional[List[str]] = None,
-        start: int = 0
+        start: int = 0,
     ) -> Dict[str, Any]:
         """
         Получить список сделок
@@ -306,7 +305,7 @@ class Bitrix24Client:
         self,
         iblock_id: int,
         filter: Optional[Dict[str, Any]] = None,
-        select: Optional[List[str]] = None
+        select: Optional[List[str]] = None,
     ) -> Dict[str, Any]:
         """
         Получить элементы универсального списка
@@ -319,10 +318,7 @@ class Bitrix24Client:
         Returns:
             Словарь с результатами
         """
-        params = {
-            "IBLOCK_TYPE_ID": "lists",
-            "IBLOCK_ID": iblock_id
-        }
+        params = {"IBLOCK_TYPE_ID": "lists", "IBLOCK_ID": iblock_id}
         if filter:
             params["FILTER"] = filter
         if select:
@@ -330,11 +326,7 @@ class Bitrix24Client:
 
         return self._make_request("lists.element.get", params)
 
-    def create_list_element(
-        self,
-        iblock_id: int,
-        fields: Dict[str, Any]
-    ) -> Dict[str, Any]:
+    def create_list_element(self, iblock_id: int, fields: Dict[str, Any]) -> Dict[str, Any]:
         """
         Создать элемент универсального списка
 
@@ -349,15 +341,12 @@ class Bitrix24Client:
             "IBLOCK_TYPE_ID": "lists",
             "IBLOCK_ID": iblock_id,
             "ELEMENT_CODE": fields.get("CODE"),
-            "FIELDS": fields
+            "FIELDS": fields,
         }
         return self._make_request("lists.element.add", params)
 
     def update_list_element(
-        self,
-        iblock_id: int,
-        element_id: int,
-        fields: Dict[str, Any]
+        self, iblock_id: int, element_id: int, fields: Dict[str, Any]
     ) -> Dict[str, Any]:
         """
         Обновить элемент универсального списка
@@ -374,7 +363,7 @@ class Bitrix24Client:
             "IBLOCK_TYPE_ID": "lists",
             "IBLOCK_ID": iblock_id,
             "ELEMENT_ID": element_id,
-            "FIELDS": fields
+            "FIELDS": fields,
         }
         return self._make_request("lists.element.update", params)
 
@@ -415,16 +404,11 @@ class Bitrix24Client:
             logger.warning("Batch operations disabled, executing commands sequentially")
             results = {}
             for cmd_name, cmd_data in commands.items():
-                results[cmd_name] = self._make_request(
-                    cmd_data["method"],
-                    cmd_data.get("params")
-                )
+                results[cmd_name] = self._make_request(cmd_data["method"], cmd_data.get("params"))
             return {"result": {"result": results}}
 
         if len(commands) > settings.BATCH_SIZE:
-            raise ValueError(
-                f"Batch size {len(commands)} exceeds maximum {settings.BATCH_SIZE}"
-            )
+            raise ValueError(f"Batch size {len(commands)} exceeds maximum {settings.BATCH_SIZE}")
 
         # Формируем batch команды
         cmd_params = {}
@@ -440,9 +424,7 @@ class Bitrix24Client:
         logger.info(f"Batch request with {len(commands)} commands")
         return self._make_request("batch", {"cmd": cmd_params})
 
-    def batch_get_educational_programs(
-        self, program_names: List[str]
-    ) -> Dict[str, Dict[str, Any]]:
+    def batch_get_educational_programs(self, program_names: List[str]) -> Dict[str, Dict[str, Any]]:
         """
         Получить несколько образовательных программ за один batch запрос
 
@@ -461,11 +443,7 @@ class Bitrix24Client:
         for i, name in enumerate(program_names):
             commands[f"program_{i}"] = {
                 "method": "lists.element.get",
-                "params": {
-                    "IBLOCK_TYPE_ID": "lists",
-                    "IBLOCK_ID": "18",
-                    "FILTER": {"=NAME": name}
-                }
+                "params": {"IBLOCK_TYPE_ID": "lists", "IBLOCK_ID": "18", "FILTER": {"=NAME": name}},
             }
 
         result = self.batch(commands)

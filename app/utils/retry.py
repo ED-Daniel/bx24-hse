@@ -4,16 +4,17 @@
 Автоматически повторяет запросы при временных ошибках.
 """
 
-import time
 import logging
-from typing import Callable, Any, Optional, Tuple, Type
+import time
 from functools import wraps
+from typing import Any, Callable, Optional, Tuple, Type
 
 logger = logging.getLogger(__name__)
 
 
 class RetryException(Exception):
     """Исключение для ошибок retry-логики"""
+
     pass
 
 
@@ -22,7 +23,7 @@ def retry_on_error(
     delay: float = 1.0,
     backoff: float = 2.0,
     exceptions: Tuple[Type[Exception], ...] = (Exception,),
-    on_retry: Optional[Callable] = None
+    on_retry: Optional[Callable] = None,
 ):
     """
     Декоратор для автоматического повтора при ошибках
@@ -47,6 +48,7 @@ def retry_on_error(
         - Attempt 4: delay * backoff^2 (4s)
         - etc.
     """
+
     def decorator(func: Callable) -> Callable:
         @wraps(func)
         def wrapper(*args, **kwargs) -> Any:
@@ -100,6 +102,7 @@ def retry_on_error(
             raise last_exception
 
         return wrapper
+
     return decorator
 
 
@@ -164,7 +167,9 @@ def retry_on_network_error(max_attempts: int = 3, delay: float = 1.0):
 
                     # Retry только для 5xx
                     if not should_retry_http_error(e):
-                        logger.error(f"❌ {func.__name__} HTTP {e.response.status_code}: не будем делать retry")
+                        logger.error(
+                            f"❌ {func.__name__} HTTP {e.response.status_code}: не будем делать retry"
+                        )
                         raise
 
                     if attempt == max_attempts:
@@ -189,6 +194,7 @@ def retry_on_network_error(max_attempts: int = 3, delay: float = 1.0):
             raise last_exception
 
         return wrapper
+
     return decorator
 
 
@@ -204,6 +210,7 @@ class RetryConfig:
 
     def __init__(self):
         import os
+
         from dotenv import load_dotenv
 
         load_dotenv()

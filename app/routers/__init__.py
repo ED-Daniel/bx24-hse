@@ -7,6 +7,6 @@
 - integration: Webhook endpoints 4;O 8=B53@0F88 A >?@>A=K<8 D>@<0<8
 """
 
-from . import logs, bitrix24, integration
+from . import bitrix24, integration, logs
 
 __all__ = ["logs", "bitrix24", "integration"]

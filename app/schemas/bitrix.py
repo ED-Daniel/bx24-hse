@@ -4,12 +4,13 @@ Pydantic модели для работы с Bitrix24 API
 Схемы для контактов, сделок, списков и других сущностей Bitrix24
 """
 
-from pydantic import BaseModel, Field, EmailStr
-from typing import Optional, List, Dict, Any
 from datetime import datetime
+from typing import Any, Dict, List, Optional
 
+from pydantic import BaseModel, EmailStr, Field
 
 # ==================== Multifield Schemas ====================
+
 
 class BitrixMultifield(BaseModel):
     """
@@ -23,21 +24,19 @@ class BitrixMultifield(BaseModel):
     """
 
     VALUE: str = Field(..., description="Значение поля")
-    VALUE_TYPE: str = Field(
-        default="WORK",
-        description="Тип значения: WORK, HOME, MOBILE, etc."
-    )
+    VALUE_TYPE: str = Field(default="WORK", description="Тип значения: WORK, HOME, MOBILE, etc.")
 
     class Config:
         json_schema_extra = {
             "examples": [
                 {"VALUE": "test@example.com", "VALUE_TYPE": "WORK"},
-                {"VALUE": "+79991234567", "VALUE_TYPE": "MOBILE"}
+                {"VALUE": "+79991234567", "VALUE_TYPE": "MOBILE"},
             ]
         }
 
 
 # ==================== Contact Schemas ====================
+
 
 class BitrixContactCreate(BaseModel):
     """
@@ -82,7 +81,7 @@ class BitrixContactCreate(BaseModel):
                 "EMAIL": [{"VALUE": "ivan@example.com", "VALUE_TYPE": "WORK"}],
                 "PHONE": [{"VALUE": "+79991234567", "VALUE_TYPE": "MOBILE"}],
                 "UTM_SOURCE": "direct",
-                "UTM_MEDIUM": "direct"
+                "UTM_MEDIUM": "direct",
             }
         }
 
@@ -106,6 +105,7 @@ class BitrixContactUpdate(BaseModel):
 
 
 # ==================== Deal Schemas ====================
+
 
 class BitrixDealCreate(BaseModel):
     """
@@ -137,8 +137,7 @@ class BitrixDealCreate(BaseModel):
 
     # Кастомные поля
     UF_CRM_1755626160: Optional[int] = Field(
-        None,
-        description="Образовательная программа (ID элемента списка IBLOCK_ID=18)"
+        None, description="Образовательная программа (ID элемента списка IBLOCK_ID=18)"
     )
     UF_CRM_1755626174: Optional[str] = Field(None, description="ID Roistat")
 
@@ -155,7 +154,7 @@ class BitrixDealCreate(BaseModel):
                 "UF_CRM_1755626160": 456,
                 "UF_CRM_1755626174": "8467460",
                 "UTM_SOURCE": "direct",
-                "COMMENTS": '{"cookies": {"roistat_visit": "8467460", "_ga": "GA1.2.564819297"}}'
+                "COMMENTS": '{"cookies": {"roistat_visit": "8467460", "_ga": "GA1.2.564819297"}}',
             }
         }
 
@@ -182,6 +181,7 @@ class BitrixDealUpdate(BaseModel):
 
 # ==================== Universal List Schemas ====================
 
+
 class BitrixListElementCreate(BaseModel):
     """
     Создание элемента универсального списка
@@ -204,8 +204,8 @@ class BitrixListElementCreate(BaseModel):
                 "FIELDS": {
                     "NAME": "Опрос по образовательным программам",
                     "PROPERTY_64": "123",  # POLL_ID
-                    "PROPERTY_65": "https://portal.hse.ru/polls/123.html"  # POLL_URL
-                }
+                    "PROPERTY_65": "https://portal.hse.ru/polls/123.html",  # POLL_URL
+                },
             }
         }
 
@@ -222,14 +222,13 @@ class BitrixListElementFilter(BaseModel):
             "example": {
                 "IBLOCK_TYPE_ID": "lists",
                 "IBLOCK_ID": 17,
-                "FILTER": {
-                    "=PROPERTY_64": "123"  # Поиск по POLL_ID
-                }
+                "FILTER": {"=PROPERTY_64": "123"},  # Поиск по POLL_ID
             }
         }
 
 
 # ==================== Response Schemas ====================
+
 
 class BitrixApiResponse(BaseModel):
     """Базовая структура ответа от Bitrix24 API"""

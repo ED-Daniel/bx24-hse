@@ -7,10 +7,10 @@
 - Контакты (по email)
 """
 
-import time
 import logging
-from typing import Optional, Dict, Any
+import time
 from functools import wraps
+from typing import Any, Dict, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -82,7 +82,7 @@ class CacheManager:
         self._cache[key] = {
             "value": value,
             "expires_at": time.time() + ttl,
-            "created_at": time.time()
+            "created_at": time.time(),
         }
 
         logger.debug(f"Cache SET: {key} (TTL={ttl}s)")
@@ -122,11 +122,7 @@ class CacheManager:
             category = key.split(":")[0]
             categories[category] = categories.get(category, 0) + 1
 
-        return {
-            "total_entries": total,
-            "categories": categories,
-            "default_ttl": self.default_ttl
-        }
+        return {"total_entries": total, "categories": categories, "default_ttl": self.default_ttl}
 
 
 def cached(category: str, key_param: str = "poll_id", ttl: Optional[int] = None):
@@ -143,6 +139,7 @@ def cached(category: str, key_param: str = "poll_id", ttl: Optional[int] = None)
         def find_poll_form(self, poll_id: int):
             # ...
     """
+
     def decorator(func):
         @wraps(func)
         def wrapper(self, *args, **kwargs):
@@ -154,6 +151,7 @@ def cached(category: str, key_param: str = "poll_id", ttl: Optional[int] = None)
             if identifier is None:
                 # Получаем индекс параметра из сигнатуры функции
                 import inspect
+
                 sig = inspect.signature(func)
                 param_names = list(sig.parameters.keys())
 
@@ -165,11 +163,13 @@ def cached(category: str, key_param: str = "poll_id", ttl: Optional[int] = None)
 
             if identifier is None:
                 # Не можем определить ключ - выполняем функцию без кеширования
-                logger.warning(f"Cached decorator: не удалось определить {key_param}, пропускаем кеширование")
+                logger.warning(
+                    f"Cached decorator: не удалось определить {key_param}, пропускаем кеширование"
+                )
                 return func(self, *args, **kwargs)
 
             # Проверяем кеш
-            cache_mgr = getattr(self, 'cache', cache_manager)
+            cache_mgr = getattr(self, "cache", cache_manager)
             cached_value = cache_mgr.get(category, identifier)
 
             if cached_value is not None:
@@ -184,6 +184,7 @@ def cached(category: str, key_param: str = "poll_id", ttl: Optional[int] = None)
             return result
 
         return wrapper
+
     return decorator
 
 
