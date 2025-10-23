@@ -7,9 +7,8 @@
 """
 
 import logging
-from typing import Any, Dict
 
-from fastapi import APIRouter, Body, HTTPException, status
+from fastapi import APIRouter, status
 
 from app.schemas.integration import (
     PostAnswerResponse,
@@ -225,12 +224,12 @@ async def post_answer(payload: WebhookPayload):
         logger.error(f"❌ Error processing webhook: {error_message}")
 
         # Определяем HTTP статус код на основе типа ошибки
-        status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+        status.HTTP_500_INTERNAL_SERVER_ERROR
 
         if "не найдена" in error_message or "not found" in error_message.lower():
-            status_code = status.HTTP_404_NOT_FOUND
+            status.HTTP_404_NOT_FOUND
         elif "обязателен" in error_message or "required" in error_message.lower():
-            status_code = status.HTTP_400_BAD_REQUEST
+            status.HTTP_400_BAD_REQUEST
 
         # Возвращаем структурированный ответ об ошибке
         # Важно: не raise HTTPException, а возвращаем PostAnswerResponse с is_successful=false

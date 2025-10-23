@@ -5,7 +5,7 @@ Pydantic модели для входящих webhook запросов от си
 """
 
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import List, Optional
 
 from pydantic import BaseModel, EmailStr, Field, field_validator
 

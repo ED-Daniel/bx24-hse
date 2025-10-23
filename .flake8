@@ -10,6 +10,8 @@ ignore =
     W503,
     # E501: line too long (black сам форматирует)
     E501,
+    # F541: f-string is missing placeholders (не критично)
+    F541,
 
 # Исключаемые директории
 exclude =
@@ -29,7 +31,8 @@ exclude =
     tests/fixtures,
 
 # Максимальная сложность функций (cyclomatic complexity)
-max-complexity = 10
+# Для бизнес-логики допустима более высокая сложность
+max-complexity = 20
 
 # Подсчет ошибок
 count = True

@@ -4,10 +4,9 @@ Pydantic модели для работы с Bitrix24 API
 Схемы для контактов, сделок, списков и других сущностей Bitrix24
 """
 
-from datetime import datetime
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, Field
 
 # ==================== Multifield Schemas ====================
 

@@ -14,7 +14,6 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 from app.config import settings
-from app.schemas.bitrix import BitrixMultifield
 from app.schemas.webhook import Analytics, WebhookData, WebhookPayload
 from app.services.bitrix24_client import bitrix24_client
 from app.utils.cache import cache_manager

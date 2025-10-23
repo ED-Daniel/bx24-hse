@@ -9,6 +9,8 @@ help:
 	@echo "  make all     - Format, lint and test"
 
 format:
+	@echo "Removing unused imports with autoflake..."
+	autoflake --in-place --remove-all-unused-imports --remove-unused-variables app/ main.py -r
 	@echo "Formatting code with black..."
 	black app/ main.py
 	@echo "Sorting imports with isort..."
@@ -21,7 +23,8 @@ lint:
 	@echo "✅ Linting complete!"
 
 lint-fix:
-	@echo "Auto-fixing with black and isort..."
+	@echo "Auto-fixing with autoflake, black and isort..."
+	autoflake --in-place --remove-all-unused-imports --remove-unused-variables app/ main.py -r
 	black app/ main.py
 	isort app/ main.py
 	@echo "Running flake8..."

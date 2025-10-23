@@ -6,7 +6,24 @@
 
 ## 📋 Установленные инструменты
 
-### 1. Black - Code Formatter
+### 1. autoflake - Unused Imports Remover
+**Версия:** 2.3.1
+
+**Что делает:**
+- Автоматически удаляет неиспользуемые импорты
+- Удаляет неиспользуемые переменные
+- Очищает код от мертвого кода
+
+**Использование:**
+```bash
+# Проверка без изменений
+autoflake --check --remove-all-unused-imports app/ main.py -r
+
+# Автоматическое удаление
+autoflake --in-place --remove-all-unused-imports --remove-unused-variables app/ main.py -r
+```
+
+### 2. Black - Code Formatter
 **Версия:** 25.9.0
 
 **Что делает:**
@@ -21,7 +38,7 @@ line-length = 100
 target-version = ['py313']
 ```
 
-### 2. isort - Import Sorter
+### 3. isort - Import Sorter
 **Версия:** 7.0.0
 
 **Что делает:**
@@ -36,7 +53,7 @@ profile = "black"
 line_length = 100
 ```
 
-### 3. Flake8 - Linter
+### 4. Flake8 - Linter
 **Версия:** 7.3.0
 
 **Что делает:**
@@ -51,7 +68,7 @@ max-line-length = 100
 max-complexity = 10
 ```
 
-### 4. MyPy - Type Checker
+### 5. MyPy - Type Checker
 **Версия:** 1.18.2
 
 **Что делает:**
@@ -90,7 +107,7 @@ make all
 **Форматирование:**
 ```bash
 make format
-# Выполняет: black + isort
+# Выполняет: autoflake + black + isort
 ```
 
 **Проверка:**
@@ -102,7 +119,7 @@ make lint
 **Автоисправление:**
 ```bash
 make lint-fix
-# Выполняет: black + isort + flake8
+# Выполняет: autoflake + black + isort + flake8
 ```
 
 **Тесты:**
@@ -123,6 +140,28 @@ make clean
 ---
 
 ## 📝 Ручной запуск
+
+### autoflake
+
+**Проверка без изменений:**
+```bash
+autoflake --check --remove-all-unused-imports app/ main.py -r
+```
+
+**Удаление неиспользуемых импортов:**
+```bash
+autoflake --in-place --remove-all-unused-imports app/ main.py -r
+```
+
+**Удаление импортов и переменных:**
+```bash
+autoflake --in-place --remove-all-unused-imports --remove-unused-variables app/ main.py -r
+```
+
+**Проверка конкретного файла:**
+```bash
+autoflake --check --remove-all-unused-imports app/services/integration_service.py
+```
 
 ### Black
 
@@ -325,6 +364,9 @@ make test
 
 echo "Running linters..."
 
+# Remove unused imports
+autoflake --in-place --remove-all-unused-imports --remove-unused-variables app/ main.py -r
+
 # Format code
 black app/ main.py
 isort app/ main.py
@@ -492,6 +534,7 @@ vulture app/
 ### Ресурсы
 
 - [PEP 8 - Style Guide](https://pep8.org/)
+- [autoflake Documentation](https://github.com/PyCQA/autoflake)
 - [Black Documentation](https://black.readthedocs.io/)
 - [Flake8 Documentation](https://flake8.pycqa.org/)
 - [isort Documentation](https://pycqa.github.io/isort/)
@@ -509,6 +552,7 @@ vulture app/
 
 | Инструмент | Цель | Статус | Команда |
 |-----------|------|--------|---------|
+| autoflake | Удаление unused imports | ✅ Настроен | `make format` |
 | Black | Форматирование | ✅ Настроен | `make format` |
 | isort | Сортировка импортов | ✅ Настроен | `make format` |
 | Flake8 | Линтинг | ✅ Настроен | `make lint` |

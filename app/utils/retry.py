@@ -15,8 +15,6 @@ logger = logging.getLogger(__name__)
 class RetryException(Exception):
     """Исключение для ошибок retry-логики"""
 
-    pass
-
 
 def retry_on_error(
     max_attempts: int = 3,
