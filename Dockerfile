@@ -4,10 +4,11 @@ FROM python:3.13-slim
 # Устанавливаем рабочую директорию
 WORKDIR /app
 
-# Устанавливаем системные зависимости для psycopg2
+# Устанавливаем системные зависимости для psycopg2 и curl для health checks
 RUN apt-get update && apt-get install -y \
     gcc \
     postgresql-client \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Копируем файл с зависимостями

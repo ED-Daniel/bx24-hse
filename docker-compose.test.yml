@@ -15,8 +15,23 @@ services:
       - DEBUG=True
       - HOST=0.0.0.0
       - PORT=8000
-      - BITRIX24_WEBHOOK_URL=${BITRIX24_WEBHOOK_URL}
+      - BITRIX24_WEBHOOK_URL=${BITRIX24_WEBHOOK_URL:-https://your-domain.bitrix24.ru/rest/1/token/}
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/crm_test
+      # Cache settings
+      - CACHE_ENABLED=True
+      - CACHE_TTL_POLL_FORMS=600
+      - CACHE_TTL_EDUCATIONAL_PROGRAMS=600
+      - CACHE_TTL_CONTACTS=300
+      - CACHE_TTL_DEALS=60
+      # Batch settings
+      - BATCH_ENABLED=True
+      - BATCH_SIZE=50
+      # Retry settings
+      - BITRIX24_RETRY_MAX_ATTEMPTS=3
+      - BITRIX24_RETRY_DELAY=1.0
+      - BITRIX24_RETRY_BACKOFF=2.0
+      # Logging
+      - LOG_LEVEL=INFO
     volumes:
       - ./app:/app/app:ro
       - ./field_mapping.json:/app/field_mapping.json:ro
@@ -60,7 +75,17 @@ services:
     command: pytest tests/ -v --tb=short --color=yes
     environment:
       - ENVIRONMENT=test
-      - BITRIX24_WEBHOOK_URL=${BITRIX24_WEBHOOK_URL}
+      - BITRIX24_WEBHOOK_URL=${BITRIX24_WEBHOOK_URL:-https://your-domain.bitrix24.ru/rest/1/token/}
+      # Cache settings
+      - CACHE_ENABLED=True
+      - CACHE_TTL_POLL_FORMS=600
+      - CACHE_TTL_EDUCATIONAL_PROGRAMS=600
+      # Batch settings
+      - BATCH_ENABLED=True
+      - BATCH_SIZE=50
+      # Retry settings
+      - BITRIX24_RETRY_MAX_ATTEMPTS=3
+      - BITRIX24_RETRY_DELAY=1.0
     volumes:
       - ./app:/app/app:ro
       - ./tests:/app/tests:ro

@@ -244,25 +244,51 @@ python test_webhook.py --endpoint all
 
 ## 🐳 Docker
 
+### Быстрый старт
+
+```bash
+# 1. Создать .env файл
+cp .env.example .env
+
+# 2. Установить BITRIX24_WEBHOOK_URL в .env
+
+# 3. Запустить все сервисы
+docker compose up -d
+
+# 4. Проверить статус
+docker compose ps
+
+# Приложение доступно на http://localhost:8000
+```
+
 ### Development
 
 ```bash
 # Собрать и запустить
-docker-compose up --build
+docker compose up --build
+
+# Запустить в фоне
+docker compose up -d
+
+# Просмотр логов
+docker compose logs -f app
 
 # Остановить
-docker-compose down
+docker compose down
 ```
 
 ### Testing
 
 ```bash
 # Запустить тесты в Docker
-docker-compose -f docker-compose.test.yml up --build
+docker compose -f docker-compose.test.yml run --rm pytest
 
-# Только pytest
-docker-compose -f docker-compose.test.yml run --rm pytest
+# С покрытием кода
+docker compose -f docker-compose.test.yml run --rm pytest \
+  pytest tests/ --cov=app --cov-report=html
 ```
+
+**Подробная документация:** [DOCKER_GUIDE.md](DOCKER_GUIDE.md)
 
 ---
 
