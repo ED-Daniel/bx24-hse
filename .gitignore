@@ -183,3 +183,4 @@ log.txt
 src/services/domain/reports/static
 static/**
 .qodo
+test_reports
