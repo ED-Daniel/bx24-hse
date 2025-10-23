@@ -33,22 +33,37 @@ pip install -r requirements.txt
 
 ### 2. Настройка окружения
 
-Создайте `.env` файл:
+Скопируйте `.env.example` в `.env` и настройте:
+
+```bash
+cp .env.example .env
+```
+
+Обязательные параметры в `.env`:
 
 ```env
-# Bitrix24 API
+# Bitrix24 API (ОБЯЗАТЕЛЬНО!)
 BITRIX24_WEBHOOK_URL=https://your-domain.bitrix24.ru/rest/1/your_webhook_key/
 
-# FastAPI
+# Основные настройки
 APP_NAME="CRM Integration Service"
 ENVIRONMENT=development
 DEBUG=True
 HOST=0.0.0.0
 PORT=8000
 
-# Database (опционально)
+# Database
 DATABASE_URL=postgresql://user:password@localhost/dbname
+
+# Оптимизация (опционально, уже настроено по умолчанию)
+CACHE_ENABLED=True
+CACHE_TTL_POLL_FORMS=600
+CACHE_TTL_EDUCATIONAL_PROGRAMS=600
+BATCH_ENABLED=True
+BITRIX24_RETRY_MAX_ATTEMPTS=3
 ```
+
+**Подробное описание всех параметров см. в `.env.example`**
 
 ### 3. Запуск сервера
 
@@ -81,6 +96,29 @@ Swagger UI документация: http://localhost:8000/docs
 ✅ **Детальное логирование** - всех этапов обработки
 
 ✅ **Health check** - проверка состояния сервиса
+
+### ⚡ Оптимизации
+
+✅ **Кеширование справочников** - автоматическое кеширование:
+- Опросных форм (TTL: 10 минут)
+- Образовательных программ (TTL: 10 минут)
+- Контактов (TTL: 5 минут)
+- Снижает количество запросов к Bitrix24 API
+
+✅ **Batch операции** - объединение нескольких запросов:
+- Поиск образовательных программ за один запрос
+- До 50 операций в одном batch
+- Автоматический fallback на последовательные запросы
+
+✅ **Retry логика** - автоматический повтор при ошибках:
+- Настраиваемое количество попыток (default: 3)
+- Exponential backoff между попытками
+- Retry только для сетевых ошибок (5xx)
+
+✅ **Настраиваемость** - все параметры через .env:
+- Включение/выключение кеша и batch
+- TTL для каждого типа данных
+- Параметры retry логики
 
 ### Бизнес-логика
 
@@ -238,6 +276,7 @@ docker-compose -f docker-compose.test.yml run --rm pytest
 | [INTEGRATION_TASK.md](INTEGRATION_TASK.md) | Техническое задание на API |
 | [INTEGRATION_API_GUIDE.md](INTEGRATION_API_GUIDE.md) | Полное руководство по API |
 | [PROCESS_WEBHOOK_GUIDE.md](PROCESS_WEBHOOK_GUIDE.md) | Руководство по process_webhook |
+| [OPTIMIZATION_GUIDE.md](OPTIMIZATION_GUIDE.md) | Руководство по оптимизации |
 | [INTEGRATION_CHECKLIST.md](INTEGRATION_CHECKLIST.md) | Чеклист для запуска |
 | [IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md) | Итоговая сводка |
 
@@ -287,6 +326,9 @@ new-bx/
 - **Alembic** - миграции БД
 - **httpx** - HTTP клиент для Bitrix24 API
 - **Pytest** - тестирование
+- **In-memory cache** - кеширование (готово для Redis)
+- **Retry механизм** - автоматический повтор запросов
+- **Batch API** - групповые операции Bitrix24
 
 ---
 

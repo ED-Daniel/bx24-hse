@@ -16,6 +16,8 @@ from pathlib import Path
 from app.services.bitrix24_client import bitrix24_client
 from app.schemas.webhook import WebhookPayload, WebhookData, Analytics
 from app.schemas.bitrix import BitrixMultifield
+from app.config import settings
+from app.utils.cache import cache_manager
 
 # Настройка логирования
 logger = logging.getLogger(__name__)
@@ -43,7 +45,9 @@ class BitrixIntegrationService:
     def __init__(self):
         """Инициализация сервиса"""
         self.client = bitrix24_client
+        self.cache = cache_manager
         self._load_field_mapping()
+        logger.info("BitrixIntegrationService инициализирован")
 
     def _load_field_mapping(self):
         """Загрузить маппинг полей из field_mapping.json"""
@@ -73,6 +77,13 @@ class BitrixIntegrationService:
         """
         logger.info(f"Searching for poll form with poll_id={poll_id}")
 
+        # Проверяем кеш
+        if settings.CACHE_ENABLED:
+            cached = self.cache.get("poll_form", poll_id)
+            if cached:
+                logger.info(f"Poll form found in cache: poll_id={poll_id}")
+                return cached
+
         try:
             # Поиск в списке "Опросные формы" (IBLOCK_ID=17)
             result = self.client.get_list_elements(
@@ -83,6 +94,16 @@ class BitrixIntegrationService:
             if result.get("result") and len(result["result"]) > 0:
                 poll_form = result["result"][0]
                 logger.info(f"Poll form found: ID={poll_form.get('ID')}")
+
+                # Кешируем результат
+                if settings.CACHE_ENABLED:
+                    self.cache.set(
+                        "poll_form",
+                        poll_id,
+                        poll_form,
+                        ttl=settings.CACHE_TTL_POLL_FORMS
+                    )
+
                 return poll_form
             else:
                 logger.warning(f"Poll form with poll_id={poll_id} not found")
@@ -194,8 +215,61 @@ class BitrixIntegrationService:
 
         found_programs = []
         not_found = []
+        programs_to_search = []
 
+        # Проверяем кеш для каждой программы
         for program_name in program_names:
+            if settings.CACHE_ENABLED:
+                cached = self.cache.get("educational_program", program_name)
+                if cached:
+                    logger.info(f"Program found in cache: {program_name}")
+                    found_programs.append(cached)
+                    continue
+
+            programs_to_search.append(program_name)
+
+        # Если все программы в кеше - возвращаем результат
+        if not programs_to_search:
+            return found_programs
+
+        # Пытаемся использовать batch запрос если программ больше одной
+        if settings.BATCH_ENABLED and len(programs_to_search) > 1:
+            logger.info(f"Using batch request for {len(programs_to_search)} programs")
+            try:
+                batch_results = self.client.batch_get_educational_programs(programs_to_search)
+
+                # Обрабатываем результаты batch запроса
+                programs_found_in_batch = []
+                for program_name in programs_to_search:
+                    if program_name in batch_results:
+                        program = batch_results[program_name]
+                        program_data = {
+                            "ID": program.get("ID"),
+                            "NAME": program.get("NAME")
+                        }
+                        found_programs.append(program_data)
+                        programs_found_in_batch.append(program_name)
+                        logger.info(f"Program found (batch): {program_name} (ID={program.get('ID')})")
+
+                        # Кешируем
+                        if settings.CACHE_ENABLED:
+                            self.cache.set(
+                                "educational_program",
+                                program_name,
+                                program_data,
+                                ttl=settings.CACHE_TTL_EDUCATIONAL_PROGRAMS
+                            )
+
+                # Обновляем список программ для последовательного поиска
+                # Ищем только те, которые не нашли через batch
+                programs_to_search = [p for p in programs_to_search if p not in programs_found_in_batch]
+
+            except Exception as e:
+                logger.warning(f"Batch request failed, falling back to sequential: {e}")
+                # При ошибке batch - ищем все программы последовательно
+
+        # Последовательный поиск для оставшихся программ
+        for program_name in programs_to_search:
             try:
                 # Поиск в списке "Образовательные программы" (IBLOCK_ID=18)
                 result = self.client.get_list_elements(
@@ -205,11 +279,21 @@ class BitrixIntegrationService:
 
                 if result.get("result") and len(result["result"]) > 0:
                     program = result["result"][0]
-                    found_programs.append({
+                    program_data = {
                         "ID": program.get("ID"),
                         "NAME": program.get("NAME")
-                    })
+                    }
+                    found_programs.append(program_data)
                     logger.info(f"Program found: {program_name} (ID={program.get('ID')})")
+
+                    # Кешируем результат
+                    if settings.CACHE_ENABLED:
+                        self.cache.set(
+                            "educational_program",
+                            program_name,
+                            program_data,
+                            ttl=settings.CACHE_TTL_EDUCATIONAL_PROGRAMS
+                        )
                 else:
                     not_found.append(program_name)
                     logger.warning(f"Program not found: {program_name}")
@@ -309,10 +393,10 @@ class BitrixIntegrationService:
         data_dict = data.model_dump(exclude_none=True)
 
         # Фильтруем стандартные поля
+        # hse_school - это дополнительное поле, которое должно сохраняться в JSON
         standard_fields = {
             'firstname', 'lastname', 'middlename', 'email', 'telephone',
-            'birthdate', 'address', 'city', 'country', 'educational_program_1',
-            'hse_school'
+            'birthdate', 'address', 'city', 'country', 'educational_program_1'
         }
 
         # Собираем все дополнительные поля
@@ -598,7 +682,7 @@ class BitrixIntegrationService:
                 )
 
                 result["deals"].append({
-                    "program_name": None,
+                    "program_name": "Общая сделка",
                     "program_id": None,
                     "deal_id": deal_id,
                     "is_new": is_new

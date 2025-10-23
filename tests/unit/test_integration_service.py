@@ -123,13 +123,19 @@ class TestBitrixIntegrationService:
 
     def test_find_educational_programs_success(self, service, mock_client):
         """Тест успешного поиска образовательных программ"""
-        mock_client.get_list_elements.return_value = BITRIX_EDUCATIONAL_PROGRAMS_RESPONSE
+        # Мок для batch запроса (возвращает обе программы)
+        mock_client.batch_get_educational_programs.return_value = {
+            "Цифровой юрист": {"ID": "101", "NAME": "Цифровой юрист"},
+            "Античность": {"ID": "102", "NAME": "Античность"}
+        }
 
         programs = service.find_educational_programs(["Цифровой юрист", "Античность"])
 
         assert len(programs) == 2
-        assert programs[0]["NAME"] == "Цифровой юрист"
-        assert programs[1]["NAME"] == "Античность"
+        # Проверяем что обе программы найдены (порядок может быть любым)
+        program_names = [p["NAME"] for p in programs]
+        assert "Цифровой юрист" in program_names
+        assert "Античность" in program_names
 
     def test_find_educational_programs_not_found(self, service, mock_client):
         """Тест когда программы не найдены"""
@@ -142,17 +148,17 @@ class TestBitrixIntegrationService:
 
     def test_find_educational_programs_partial_match(self, service, mock_client):
         """Тест когда найдена только часть программ"""
-        # Возвращаем только одну программу из двух запрошенных
-        partial_response = {
-            "result": [{"ID": "101", "NAME": "Цифровой юрист"}],
-            "total": 1
+        # Batch запрос находит только первую программу
+        mock_client.batch_get_educational_programs.return_value = {
+            "Цифровой юрист": {"ID": "101", "NAME": "Цифровой юрист"}
+            # "Несуществующая" не найдена
         }
-        mock_client.get_list_elements.return_value = partial_response
 
         with pytest.raises(Exception) as exc_info:
             service.find_educational_programs(["Цифровой юрист", "Несуществующая"])
 
         assert "не найдены в системе" in str(exc_info.value)
+        assert "Несуществующая" in str(exc_info.value)
 
     # ==================== Тесты find_or_create_deal ====================
 
