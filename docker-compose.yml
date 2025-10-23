@@ -7,14 +7,29 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - APP_NAME=${APP_NAME}
-      - ENVIRONMENT=${ENVIRONMENT}
-      - DEBUG=${DEBUG}
+      - APP_NAME=${APP_NAME:-CRM Integration Service}
+      - ENVIRONMENT=${ENVIRONMENT:-development}
+      - DEBUG=${DEBUG:-True}
       - HOST=0.0.0.0
       - PORT=8000
-      - DATABASE_URL=${DATABASE_URL}
-      - SECRET_KEY=${SECRET_KEY}
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/fastapi_db
+      - SECRET_KEY=${SECRET_KEY:-change-this-secret-key}
       - BITRIX24_WEBHOOK_URL=${BITRIX24_WEBHOOK_URL}
+      # Cache settings
+      - CACHE_ENABLED=${CACHE_ENABLED:-True}
+      - CACHE_TTL_POLL_FORMS=${CACHE_TTL_POLL_FORMS:-600}
+      - CACHE_TTL_EDUCATIONAL_PROGRAMS=${CACHE_TTL_EDUCATIONAL_PROGRAMS:-600}
+      - CACHE_TTL_CONTACTS=${CACHE_TTL_CONTACTS:-300}
+      - CACHE_TTL_DEALS=${CACHE_TTL_DEALS:-60}
+      # Batch settings
+      - BATCH_ENABLED=${BATCH_ENABLED:-True}
+      - BATCH_SIZE=${BATCH_SIZE:-50}
+      # Retry settings
+      - BITRIX24_RETRY_MAX_ATTEMPTS=${BITRIX24_RETRY_MAX_ATTEMPTS:-3}
+      - BITRIX24_RETRY_DELAY=${BITRIX24_RETRY_DELAY:-1.0}
+      - BITRIX24_RETRY_BACKOFF=${BITRIX24_RETRY_BACKOFF:-2.0}
+      # Logging
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
     volumes:
       - .:/app
     depends_on:

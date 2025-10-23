@@ -1,21 +1,17 @@
-from fastapi import APIRouter, HTTPException, Body
-from typing import Optional, Dict, Any, List
+from typing import Any, Dict, Optional
+
+from fastapi import APIRouter, Body, HTTPException
+
 from app.services.bitrix24_client import bitrix24_client
 
-router = APIRouter(
-    prefix="/bitrix24",
-    tags=["bitrix24"]
-)
+router = APIRouter(prefix="/bitrix24", tags=["bitrix24"])
 
 
 # ==================== CONTACTS ====================
 
+
 @router.get("/contacts")
-def list_contacts(
-    start: int = 0,
-    name: Optional[str] = None,
-    phone: Optional[str] = None
-):
+def list_contacts(start: int = 0, name: Optional[str] = None, phone: Optional[str] = None):
     """Получить список контактов с фильтрацией"""
     try:
         filter_params = {}
@@ -25,8 +21,7 @@ def list_contacts(
             filter_params["PHONE"] = phone
 
         result = bitrix24_client.get_contacts(
-            filter=filter_params if filter_params else None,
-            start=start
+            filter=filter_params if filter_params else None, start=start
         )
         return result
     except Exception as e:
@@ -85,12 +80,9 @@ def delete_contact(contact_id: int):
 
 # ==================== LEADS ====================
 
+
 @router.get("/leads")
-def list_leads(
-    start: int = 0,
-    title: Optional[str] = None,
-    status_id: Optional[str] = None
-):
+def list_leads(start: int = 0, title: Optional[str] = None, status_id: Optional[str] = None):
     """Получить список лидов с фильтрацией"""
     try:
         filter_params = {}
@@ -100,8 +92,7 @@ def list_leads(
             filter_params["STATUS_ID"] = status_id
 
         result = bitrix24_client.get_leads(
-            filter=filter_params if filter_params else None,
-            start=start
+            filter=filter_params if filter_params else None, start=start
         )
         return result
     except Exception as e:
@@ -161,12 +152,9 @@ def delete_lead(lead_id: int):
 
 # ==================== DEALS ====================
 
+
 @router.get("/deals")
-def list_deals(
-    start: int = 0,
-    title: Optional[str] = None,
-    stage_id: Optional[str] = None
-):
+def list_deals(start: int = 0, title: Optional[str] = None, stage_id: Optional[str] = None):
     """Получить список сделок с фильтрацией"""
     try:
         filter_params = {}
@@ -176,8 +164,7 @@ def list_deals(
             filter_params["STAGE_ID"] = stage_id
 
         result = bitrix24_client.get_deals(
-            filter=filter_params if filter_params else None,
-            start=start
+            filter=filter_params if filter_params else None, start=start
         )
         return result
     except Exception as e:

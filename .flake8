@@ -1,2 +1,39 @@
 [flake8]
-max-line-length = 200
+# Максимальная длина строки
+max-line-length = 100
+
+# Игнорируемые ошибки
+ignore =
+    # E203: whitespace before ':' (конфликт с black)
+    E203,
+    # W503: line break before binary operator (устаревшее правило)
+    W503,
+    # E501: line too long (black сам форматирует)
+    E501,
+    # F541: f-string is missing placeholders (не критично)
+    F541,
+
+# Исключаемые директории
+exclude =
+    .git,
+    __pycache__,
+    .venv,
+    venv,
+    ENV,
+    env,
+    .eggs,
+    *.egg,
+    build,
+    dist,
+    .pytest_cache,
+    .mypy_cache,
+    alembic/versions,
+    tests/fixtures,
+
+# Максимальная сложность функций (cyclomatic complexity)
+# Для бизнес-логики допустима более высокая сложность
+max-complexity = 20
+
+# Подсчет ошибок
+count = True
+statistics = True

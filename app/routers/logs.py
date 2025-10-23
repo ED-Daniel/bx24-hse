@@ -1,13 +1,11 @@
-from fastapi import APIRouter, HTTPException, Depends
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
+from sqlalchemy.orm import Session
+
 from app.database import get_db
 from app.models.log import Log
 
-router = APIRouter(
-    prefix="/logs",
-    tags=["logs"]
-)
+router = APIRouter(prefix="/logs", tags=["logs"])
 
 
 @router.get("/")
@@ -16,11 +14,7 @@ def get_logs(db: Session = Depends(get_db)):
     logs = db.execute(select(Log)).scalars().all()
     return {
         "logs": [
-            {
-                "id": log.id,
-                "created_at": log.created_at.isoformat(),
-                "message": log.message
-            }
+            {"id": log.id, "created_at": log.created_at.isoformat(), "message": log.message}
             for log in logs
         ]
     }
@@ -34,11 +28,7 @@ def get_log(log_id: int, db: Session = Depends(get_db)):
     if not log:
         raise HTTPException(status_code=404, detail="Лог не найден")
 
-    return {
-        "id": log.id,
-        "created_at": log.created_at.isoformat(),
-        "message": log.message
-    }
+    return {"id": log.id, "created_at": log.created_at.isoformat(), "message": log.message}
 
 
 @router.post("/")
@@ -54,8 +44,8 @@ def create_log(message: str, db: Session = Depends(get_db)):
         "log": {
             "id": new_log.id,
             "created_at": new_log.created_at.isoformat(),
-            "message": new_log.message
-        }
+            "message": new_log.message,
+        },
     }
 
 
