@@ -13,7 +13,7 @@ class Bitrix24Client:
     """Клиент для работы с Bitrix24 REST API"""
 
     def __init__(self):
-        self.base_url = settings.BITRIX24_WEBHOOK_URL.rstrip("/")
+        self.base_url = settings.BITRIX24_WEBHOOK_URL
         self.client = httpx.Client(timeout=30.0)
 
     def __del__(self):
