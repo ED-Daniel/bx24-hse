@@ -91,6 +91,9 @@ async def post_poll(request: PostPollRequest):
             "NAME": request.poll_name,
             "PROPERTY_64": str(request.poll_id),  # POLL_ID
             "PREVIEW_TEXT": f"Язык: {request.poll_language}, Создан: {request.employee_email}",
+            "CODE": str(request.poll_id),
+            "PROPERTY_65": f"https://portal.hse.ru/{str(request.poll_id)}",
+            "PROPERTY_66": 0,
         }
 
         result = integration_service.client.create_list_element(
