@@ -6,6 +6,7 @@
 - POST /postAnswer - Обработка ответа из опросной формы
 """
 
+import json
 import logging
 
 from fastapi import APIRouter, status
@@ -67,6 +68,14 @@ async def post_poll(request: PostPollRequest):
     logger.info(f"   Poll Name: {request.poll_name}")
     logger.info(f"   Language: {request.poll_language}")
     logger.info(f"   Employee: {request.employee_email}")
+    logger.info("=" * 70)
+
+    logger.info("Full request body:")
+    try:
+        request_dict = request.model_dump()
+        logger.info(json.dumps(request_dict, ensure_ascii=False, indent=2))
+    except Exception as e:
+        logger.warning(f"Could not serialize request body: {e}")
     logger.info("=" * 70)
 
     try:
@@ -194,6 +203,14 @@ async def post_answer(payload: WebhookPayload):
     logger.info(f"   Poll ID: {payload.header_data.poll_id}")
     logger.info(f"   Answer ID: {payload.header_data.answer_id}")
     logger.info(f"   Email: {payload.data.email}")
+    logger.info("=" * 70)
+
+    logger.info("Full request body:")
+    try:
+        payload_dict = payload.model_dump()
+        logger.info(json.dumps(payload_dict, ensure_ascii=False, indent=2, default=str))
+    except Exception as e:
+        logger.warning(f"Could not serialize request body: {e}")
     logger.info("=" * 70)
 
     try:
