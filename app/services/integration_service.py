@@ -46,6 +46,7 @@ class BitrixIntegrationService:
         self.client = bitrix24_client
         self.cache = cache_manager
         self._load_field_mapping()
+        self._load_poll_id_names()
         logger.info("BitrixIntegrationService инициализирован")
 
     def _load_field_mapping(self):
@@ -59,20 +60,36 @@ class BitrixIntegrationService:
             logger.error(f"Failed to load field mapping: {e}")
             self.field_mapping = {}
 
+    def _load_poll_id_names(self):
+        """Загрузить соответствие poll_id и названий из poll_id_names.json"""
+        try:
+            poll_names_path = Path(__file__).parent.parent.parent / "poll_id_names.json"
+            with open(poll_names_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                # Создаем словарь для быстрого поиска: poll_id -> title
+                self.poll_id_names = {
+                    record["poll_id"]: record["title"] for record in data.get("RECORDS", [])
+                }
+            logger.info(f"Poll ID names loaded successfully: {len(self.poll_id_names)} records")
+        except Exception as e:
+            logger.error(f"Failed to load poll_id_names.json: {e}")
+            self.poll_id_names = {}
+
     # ==================== STEP 1: Find Poll Form ====================
 
     def find_poll_form(self, poll_id: int) -> Optional[Dict[str, Any]]:
         """
-        Поиск опросной формы в списке по poll_id
+        Поиск опросной формы в списке по poll_id.
+        Если форма не найдена - автоматически создается.
 
         Args:
             poll_id: ID опросной формы из внешней системы
 
         Returns:
-            Словарь с данными опросной формы или None, если не найдена
+            Словарь с данными опросной формы (найденной или созданной)
 
         Raises:
-            Exception: Если опросная форма не найдена (должен вернуться HTTP 404)
+            Exception: Если не удалось найти/создать опросную форму
         """
         logger.info(f"Searching for poll form with poll_id={poll_id}")
 
@@ -102,12 +119,88 @@ class BitrixIntegrationService:
 
                 return poll_form
             else:
-                logger.warning(f"Poll form with poll_id={poll_id} not found")
-                raise Exception(f"Опросная форма с ID {poll_id} не найдена в системе")
+                # Форма не найдена - создаем автоматически
+                logger.warning(f"Poll form with poll_id={poll_id} not found, creating new one...")
+                return self._create_poll_form(poll_id)
 
         except Exception as e:
-            logger.error(f"Error finding poll form: {e}")
-            raise
+            # Если это не ошибка "форма не найдена", а что-то другое
+            if "не найдена" not in str(e) and "not found" not in str(e).lower():
+                logger.error(f"Error finding poll form: {e}")
+                raise
+            # Если форма не найдена, пытаемся создать
+            logger.warning(f"Poll form with poll_id={poll_id} not found, creating new one...")
+            return self._create_poll_form(poll_id)
+
+    def _create_poll_form(self, poll_id: int) -> Dict[str, Any]:
+        """
+        Создание новой опросной формы в Bitrix24
+
+        Args:
+            poll_id: ID опросной формы
+
+        Returns:
+            Словарь с данными созданной формы
+
+        Raises:
+            Exception: Если не удалось создать форму
+        """
+        # Получаем название из загруженных данных
+        poll_name = self.poll_id_names.get(poll_id)
+
+        if not poll_name:
+            poll_name = f"Опросная форма #{poll_id}"
+            logger.warning(
+                f"Poll name not found in poll_id_names.json for poll_id={poll_id}, using default: {poll_name}"
+            )
+
+        logger.info(f"Creating new poll form: poll_id={poll_id}, name={poll_name}")
+
+        # Создаем поля для новой формы
+        fields = {
+            "NAME": poll_name,
+            "PROPERTY_64": str(poll_id),  # POLL_ID
+            "CODE": str(poll_id),
+            "PROPERTY_65": f"https://portal.hse.ru/{str(poll_id)}",
+            "PROPERTY_66": 0,
+        }
+
+        try:
+            # Создаем элемент в списке
+            result = self.client.create_list_element(
+                iblock_id=self.POLL_FORMS_LIST_ID, fields=fields
+            )
+
+            if result.get("result"):
+                bitrix_id = result["result"]
+                logger.info(f"Poll form created successfully: Bitrix ID={bitrix_id}")
+
+                # Получаем созданную форму для возврата
+                created_form_result = self.client.get_list_elements(
+                    iblock_id=self.POLL_FORMS_LIST_ID,
+                    filter={f"={self.POLL_ID_PROPERTY}": str(poll_id)},
+                )
+
+                if created_form_result.get("result") and len(created_form_result["result"]) > 0:
+                    poll_form = created_form_result["result"][0]
+
+                    # Кешируем созданную форму
+                    if settings.CACHE_ENABLED:
+                        self.cache.set(
+                            "poll_form", poll_id, poll_form, ttl=settings.CACHE_TTL_POLL_FORMS
+                        )
+
+                    return poll_form
+                else:
+                    raise Exception(
+                        f"Форма создана (ID={bitrix_id}), но не удалось получить её данные"
+                    )
+            else:
+                raise Exception("Failed to create poll form in Bitrix24")
+
+        except Exception as e:
+            logger.error(f"Error creating poll form: {e}")
+            raise Exception(f"Не удалось создать опросную форму с ID {poll_id}: {e}")
 
     # ==================== STEP 2: Find or Create Contact ====================
 
